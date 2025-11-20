@@ -1,0 +1,82 @@
+<div class="flex flex-col">
+
+  <!-- 1. HERO SECTION (Fără imagine de fundal, doar gradient mistic) -->
+  <!-- Am folosit un gradient de la mystic-dark la mystic-primary -->
+  <section class="relative bg-gradient-to-br from-mystic-dark to-mystic-primary text-mystic-pale py-24 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
+
+    <!-- Un element decorativ subtil (un cerc in fundal) -->
+    <div class="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-mystic-accent opacity-10 rounded-full blur-3xl"></div>
+
+    <div class="relative max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-8 leading-tight">
+        Sănătatea ta, într-o nouă lumină.
+        <br />
+        <span class="text-mystic-accent">Inteligentă. Umană.</span>
+      </h1>
+
+      <!-- Am folosit leading-relaxed pentru un text mai aerisit si mai usor de citit -->
+      <p class="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-mystic-light leading-relaxed mb-12 font-light">
+        Bine ai venit la AethirMael Medical Center. Redefinim experiența medicală prin combinarea empatiei specialiștilor noștri cu precizia inteligenței artificiale.
+      </p>
+
+      <div class="flex flex-wrap justify-center gap-6">
+        <!-- Buton principal customizat cu culorile noastre -->
+        <button mat-raised-button class="!bg-mystic-accent !text-white !text-lg !px-8 !py-3 !rounded-full shadow-lg hover:!bg-mystic-primary transition-all">
+          <mat-icon class="mr-2">calendar_today</mat-icon>
+          Fă o Programare
+        </button>
+
+        <!-- Buton secundar -->
+        <button mat-stroked-button class="!border-mystic-light !text-mystic-light hover:!bg-mystic-dark/30 !text-lg !px-8 !py-3 !rounded-full transition-all">
+          <mat-icon class="mr-2">smart_toy</mat-icon>
+          Discută cu AI-ul
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. SERVICII / FEATURES (Culori temperate) -->
+  <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-mystic-dark mb-4">Angajamentul Nostru</h2>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">Echilibru perfect între tehnologie avansată și grijă personalizată.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+      <!-- Card 1 -->
+      <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-mystic-pale flex flex-col items-center text-center">
+        <div class="bg-mystic-pale p-4 rounded-full text-mystic-primary mb-6">
+          <mat-icon class="text-4xl">verified_user</mat-icon>
+        </div>
+        <h3 class="text-xl font-bold text-mystic-dark mb-3">Excelență Medicală</h3>
+        <p class="text-gray-600 leading-relaxed">
+          Acces la o rețea de medici specialiști de top, selectați riguros pentru expertiza lor.
+        </p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-mystic-pale flex flex-col items-center text-center">
+        <div class="bg-mystic-pale p-4 rounded-full text-mystic-primary mb-6">
+          <mat-icon class="text-4xl">bolt</mat-icon>
+        </div>
+        <h3 class="text-xl font-bold text-mystic-dark mb-3">Eficiență Maximă</h3>
+        <p class="text-gray-600 leading-relaxed">
+          Sistem digitalizat de programări. Timpul tău este prețios, așa că eliminăm așteptarea inutilă.
+        </p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-mystic-pale flex flex-col items-center text-center">
+        <div class="bg-mystic-pale p-4 rounded-full text-mystic-primary mb-6">
+          <mat-icon class="text-4xl">psychology_alt</mat-icon>
+        </div>
+        <h3 class="text-xl font-bold text-mystic-dark mb-3">Ghidaj AI Non-Stop</h3>
+        <p class="text-gray-600 leading-relaxed">
+          Asistentul nostru virtual te ajută 24/7 să navighezi simptomele și să găsești specialistul potrivit.
+        </p>
+      </div>
+
+    </div>
+  </section>
+</div>
