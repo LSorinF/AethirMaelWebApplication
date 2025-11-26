@@ -1,10 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
-using AethirMaelWebApplication.Server.Data;
-using AethirMaelWebApplication.Server.Models;
-
-
+﻿using AethirMaelWebApplication.Server.Models;
+using AethirMaelWebApplication.Server.Services; // Importam Serviciile
+using Microsoft.AspNetCore.Mvc;
 
 namespace AethirMaelWebApplication.Server.Controllers
 {
@@ -12,51 +8,46 @@ namespace AethirMaelWebApplication.Server.Controllers
     [ApiController]
     public class DoctorsController : ControllerBase
     {
-        public readonly ApplicationDbContext _context;
-
-        public DoctorsController(ApplicationDbContext context)
+        private readonly DoctorService _doctorService;
+        
+        public DoctorsController(DoctorService doctorService)
         {
-            _context = context;
+            _doctorService = doctorService;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Doctor>>> GetDoctors()
         {
-            // Interogarea bazei de date si includerea Specializarii (JOIN implicit)
-            // pentru a putea afisa si numele specializarii in frontend
             try
             {
-                var response = await _context.Doctors
-                                .ToListAsync();
-                return response;
+                var doctors = await _doctorService.GetAllDoctorsAsync();
+                return Ok(doctors);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                var exception = e;
-                return null;
+                // Putem loga eroarea aici
+                return StatusCode(500, "A aparut o eroare interna.");
             }
-           
         }
 
         [HttpGet("Specializations")]
         public async Task<ActionResult<IEnumerable<Specialization>>> GetSpecializations()
         {
-            return await _context.Specializations.ToListAsync();
+            var specializations = await _doctorService.GetAllSpecializationsAsync();
+            return Ok(specializations);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Doctor>> GetDoctor(int id)
         {
-            var doctor = await _context.Doctors
-                                       .Include(d => d.Specialization)
-                                       .FirstOrDefaultAsync(d => d.DoctorId == id);
+            var doctor = await _doctorService.GetDoctorByIdAsync(id);
 
             if (doctor == null)
             {
                 return NotFound();
             }
 
-            return doctor;
+            return Ok(doctor);
         }
     }
 }

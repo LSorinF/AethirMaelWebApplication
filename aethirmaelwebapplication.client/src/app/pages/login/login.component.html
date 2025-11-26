@@ -1,0 +1,46 @@
+<div class="min-h-[calc(100vh-64px)] flex items-center justify-center bg-mystic-pale px-4">
+
+  <mat-card class="w-full max-w-md p-6 shadow-xl border-t-4 border-mystic-primary">
+
+    <div class="text-center mb-8">
+      <div class="bg-mystic-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-mystic-primary">
+        <mat-icon class="text-3xl scale-150">lock</mat-icon>
+      </div>
+      <h2 class="text-2xl font-bold text-mystic-dark">Autentificare</h2>
+      <p class="text-gray-500">Intră în contul tău AethirMael</p>
+    </div>
+
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="flex flex-col gap-4">
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" name="email" [(ngModel)]="credentials.email" required email placeholder="ex: mike@test.com">
+        <mat-icon matSuffix>email</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Parolă</mat-label>
+        <input matInput type="password" name="password" [(ngModel)]="credentials.password" required placeholder="******">
+        <mat-icon matSuffix>key</mat-icon>
+      </mat-form-field>
+
+      <button mat-raised-button
+              class="!bg-mystic-primary !text-white !py-6 !text-lg mt-2"
+              [disabled]="loginForm.invalid || isLoading"
+              type="submit">
+        <span *ngIf="!isLoading">Intră în Cont</span>
+        <span *ngIf="isLoading">Se verifică...</span>
+      </button>
+
+    </form>
+
+    <div class="mt-6 text-center text-sm text-gray-600">
+      Nu ai cont încă?
+      <a routerLink="/register" class="text-mystic-accent font-bold hover:underline cursor-pointer">
+        Înregistrează-te
+      </a>
+    </div>
+
+  </mat-card>
+
+</div>

@@ -1,6 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using AethirMaelWebApplication.Server.Data;
+﻿using AethirMaelWebApplication.Server.Data;
+using AethirMaelWebApplication.Server.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +33,27 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<DoctorService>();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+            .GetBytes(builder.Configuration.GetSection("JwtSettings:Key").Value!)),
+        ValidateIssuer = false, // Pentru simplitate in dev
+        ValidateAudience = false // Pentru simplitate in dev
+    };
+});
+
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -54,6 +79,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("AngularClientPolicy");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

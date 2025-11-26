@@ -1,34 +1,42 @@
-<!-- HEADER / MENIU DE NAVIGARE -->
-<!-- Am folosit bg-mystic-dark pentru fundal și text-mystic-pale pentru scris -->
 <header class="bg-mystic-dark text-mystic-pale py-4 px-6 shadow-md flex items-center justify-between sticky top-0 z-50">
 
-  <!-- Logo / Titlu -->
-  <div class="flex items-center">
-    <!-- Putem adauga o mica iconita langa text -->
+  <div class="flex items-center cursor-pointer" routerLink="/">
     <span class="material-icons mr-2 text-mystic-accent font-light">local_hospital</span>
     <h1 class="margin-0 text-xl md:text-2xl font-semibold tracking-wide">
       AethirMael Medical
     </h1>
   </div>
 
-  <!-- Link-uri de navigare -->
-  <nav class="flex space-x-6">
-    <!-- routerLinkActive adauga clasa specificata cand linkul este activ -->
-    <a routerLink="/home"
-       routerLinkActive="text-white font-bold border-b-2 border-mystic-accent"
-       class="text-mystic-light hover:text-white transition-colors duration-300 pb-1 text-sm md:text-base font-medium no-underline">
+  <nav class="flex items-center space-x-6">
+    <a routerLink="/home" routerLinkActive="text-white border-b-2 border-mystic-accent" class="text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">
       Acasă
     </a>
-    <a routerLink="/medici"
-       routerLinkActive="text-white font-bold border-b-2 border-mystic-accent"
-       class="text-mystic-light hover:text-white transition-colors duration-300 pb-1 text-sm md:text-base font-medium no-underline">
+    <a routerLink="/medici" routerLinkActive="text-white border-b-2 border-mystic-accent" class="text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">
       Lista Medici
     </a>
+
+    <!-- Daca NU ESTE logat-->
+    <ng-container *ngIf="(authService.currentUser$ | async) === null">
+      <a routerLink="/login" class="bg-mystic-accent hover:bg-mystic-primary text-white px-4 py-2 rounded-full text-sm font-bold transition-all no-underline shadow-lg">
+        Login
+      </a>
+    </ng-container>
+
+    <!-- Daca ESTE logat -->
+    <ng-container *ngIf="authService.currentUser$ | async as user">
+      <div class="flex items-center gap-4">
+        <span class="text-mystic-light text-sm hidden md:block">
+          Salut, <span class="font-bold text-white">{{ user.name }}</span>
+        </span>
+        <button (click)="logout()" class="text-red-300 hover:text-red-100 text-sm font-medium border border-red-900/30 px-3 py-1 rounded hover:bg-red-900/20 transition-all">
+          Logout
+        </button>
+      </div>
+    </ng-container>
+
   </nav>
 </header>
 
-<!-- ZONA PRINCIPALĂ -->
-<!-- Am schimbat fundalul general intr-unul foarte pal -->
 <main class="bg-mystic-pale min-h-[calc(100vh-64px)]">
   <router-outlet></router-outlet>
 </main>
