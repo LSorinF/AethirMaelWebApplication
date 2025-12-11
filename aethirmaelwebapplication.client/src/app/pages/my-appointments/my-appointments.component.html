@@ -1,0 +1,114 @@
+<div class="min-h-screen bg-mystic-pale p-8">
+
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold text-mystic-dark mb-8 flex items-center">
+      <mat-icon class="mr-3 scale-150 text-mystic-accent">event_note</mat-icon>
+      Programările Mele
+    </h2>
+
+    <div *ngIf="isLoading" class="text-center text-gray-500 py-10">
+      <mat-spinner diameter="40" class="mx-auto"></mat-spinner>
+      <p class="mt-4">Se încarcă datele...</p>
+    </div>
+
+    <!-- ZONA CU TABURI -->
+    <div *ngIf="!isLoading">
+
+      <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" animationDuration="0ms">
+
+        <!-- TAB 1: VIITOARE -->
+        <mat-tab label="Viitoare">
+          <div class="py-6">
+            <ng-container *ngIf="upcomingAppointments.length > 0; else noUpcoming">
+              <div class="grid gap-6">
+                <!-- Folosim sablonul definit mai jos -->
+                <ng-container *ngFor="let app of upcomingAppointments">
+                  <ng-container *ngTemplateOutlet="appointmentCard; context: { $implicit: app }"></ng-container>
+                </ng-container>
+              </div>
+            </ng-container>
+            <ng-template #noUpcoming>
+              <div class="bg-white p-8 rounded-xl shadow-sm text-center border border-gray-100">
+                <mat-icon class="text-6xl text-gray-300 mb-4">calendar_today</mat-icon>
+                <p class="text-xl text-gray-600 mb-6">Nu ai programări viitoare.</p>
+                <button mat-raised-button routerLink="/medici" class="!bg-mystic-accent !text-white">
+                  Fă o programare nouă
+                </button>
+              </div>
+            </ng-template>
+          </div>
+        </mat-tab>
+
+        <!-- TAB 2: ISTORIC -->
+        <mat-tab label="Istoric">
+          <div class="py-6">
+            <ng-container *ngIf="pastAppointments.length > 0; else noPast">
+              <div class="grid gap-6 opacity-75">
+                <!-- Le facem putin mai sterse vizual -->
+                <ng-container *ngFor="let app of pastAppointments">
+                  <ng-container *ngTemplateOutlet="appointmentCard; context: { $implicit: app }"></ng-container>
+                </ng-container>
+              </div>
+            </ng-container>
+            <ng-template #noPast>
+              <p class="text-gray-500 italic p-4">Nu există istoric de programări.</p>
+            </ng-template>
+          </div>
+        </mat-tab>
+
+      </mat-tab-group>
+
+    </div>
+  </div>
+</div>
+
+<!-- ȘABLON REUTILIZABIL PENTRU CARD (Ca sa nu scriem codul de 2 ori) -->
+<ng-template #appointmentCard let-app>
+  <mat-card class="!rounded-xl border-l-8 transition-all shadow-sm hover:shadow-md"
+            [class.border-yellow-400]="app.status === 'Solicitata'"
+            [class.border-green-500]="app.status === 'Confirmată'"
+            [class.border-red-500]="app.status === 'Anulată'"
+            [class.bg-gray-50]="app.status === 'Anulată'">
+    <!-- Fundal gri daca e anulata -->
+
+    <div class="p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+
+      <!-- Data si Ora -->
+      <div class="flex items-center gap-4">
+        <div class="bg-mystic-pale p-4 rounded-lg text-center min-w-[80px]">
+          <div class="text-sm font-bold text-gray-500 uppercase">{{ app.appointmentDate | date:'MMM' }}</div>
+          <div class="text-2xl font-bold text-mystic-primary">{{ app.appointmentDate | date:'dd' }}</div>
+        </div>
+        <div>
+          <div class="text-lg font-bold text-gray-800">
+            {{ app.appointmentDate | date:'HH:mm' }}
+          </div>
+          <div class="text-gray-500 text-sm">
+            {{ app.appointmentDate | date:'EEEE, yyyy' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Detalii Doctor -->
+      <div class="text-center md:text-left flex-1 md:pl-8">
+        <h3 class="text-xl font-bold text-mystic-dark mb-1">{{ app.doctorName }}</h3>
+        <p class="text-gray-500 italic text-sm" *ngIf="app.patientNotes">
+          "{{ app.patientNotes }}"
+        </p>
+      </div>
+
+      <!-- Status -->
+      <div>
+        <mat-chip-set>
+          <mat-chip [class.bg-yellow-100]="app.status === 'Solicitata'"
+                    [class.bg-green-100]="app.status === 'Confirmată'"
+                    [class.bg-red-100]="app.status === 'Anulată'"
+                    class="font-bold">
+            {{ app.status }}
+          </mat-chip>
+        </mat-chip-set>
+      </div>
+
+    </div>
+  </mat-card>
+</ng-template>

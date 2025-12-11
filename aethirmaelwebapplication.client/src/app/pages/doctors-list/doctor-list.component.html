@@ -1,6 +1,5 @@
 <section class="max-w-6xl mx-auto p-8 font-sans">
 
-  <!-- Header Sectiune -->
   <div class="text-center mb-10">
     <h2 class="text-4xl font-bold text-gray-800 mb-2">👨‍⚕️ Echipa Noastră Medicală</h2>
     <p class="text-gray-600 text-lg">
@@ -8,12 +7,10 @@
     </p>
   </div>
 
-  <!-- Loading Spinner -->
   <div *ngIf="isLoading" class="flex justify-center items-center p-10">
     <mat-spinner diameter="50"></mat-spinner>
   </div>
 
-  <!-- Error Message -->
   <mat-card *ngIf="errorMessage" class="mb-6 bg-red-50 border-l-4 border-red-500 shadow-none">
     <mat-card-content class="p-4">
       <div class="flex items-center text-red-800 font-medium">
@@ -23,7 +20,6 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- Info Box (Stilul din exemplul tau, adaptat la medical) -->
   <mat-card *ngIf="!isLoading && !errorMessage" class="mb-8 bg-blue-50 border-l-4 border-blue-500 shadow-sm">
     <mat-card-content class="p-4">
       <p class="text-blue-800 font-medium flex items-center">
@@ -33,13 +29,19 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- Grid de Carduri Medici -->
   <div *ngIf="!isLoading && !errorMessage" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-    <!-- Card Individual Medic (Iteram prin lista) -->
-    <mat-card *ngFor="let doc of doctors" class="hover:shadow-lg transition-shadow duration-300 border border-gray-100">
+    <mat-card *ngFor="let doc of doctors" class="hover:shadow-lg transition-shadow duration-300 border border-gray-100 relative">
 
-      <!-- Header Card: Avatar si Nume -->
+      <!-- BUTON DELETE (DOAR PENTRU ADMIN) -->
+      <button *ngIf="isAdmin"
+              (click)="deleteDoctor(doc)"
+              mat-icon-button
+              class="absolute top-2 right-2 text-red-400 hover:text-red-600 hover:bg-red-50 z-10"
+              matTooltip="Șterge Medic">
+        <mat-icon>delete</mat-icon>
+      </button>
+
       <div class="p-6 flex items-center space-x-4 border-b border-gray-100 bg-gray-50 rounded-t-xl">
         <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xl">
           {{ doc.firstName.charAt(0) }}{{ doc.lastName.charAt(0) }}
@@ -52,7 +54,6 @@
         </div>
       </div>
 
-      <!-- Continut Card: Detalii Contact -->
       <mat-card-content class="p-6 space-y-3">
         <div class="flex items-center text-gray-600">
           <mat-icon class="mr-3 text-gray-400 text-sm">email</mat-icon>
@@ -64,7 +65,6 @@
         </div>
       </mat-card-content>
 
-      <!-- Actiuni Card -->
       <mat-card-actions class="p-4 pt-0 flex justify-between items-center">
         <button mat-stroked-button color="primary" class="w-full" (click)="bookAppointment(doc)">
           <mat-icon class="mr-1">calendar_today</mat-icon>

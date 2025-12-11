@@ -2,23 +2,19 @@
 
 namespace AethirMaelWebApplication.Server.DTOs
 {
-    public class RegisterDto
+    public class CreateDoctorDto
     {
-        [Required]
-        public string Email { get; set; }
-        [Required]
-        public string Password { get; set; }
         [Required]
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
-
-        // Câmpuri noi adăugate:
         [Required]
-        public string CNP { get; set; }
+        public string Email { get; set; }
+        [Required]
+        public string Password { get; set; } // Parola pentru cont
         [Required]
         public string Phone { get; set; }
         [Required]
-        public DateTime DateOfBirth { get; set; }
+        public int SpecializationId { get; set; } // Trebuie sa alegem specializarea
     }
 }

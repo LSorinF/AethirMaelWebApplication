@@ -27,5 +27,20 @@ namespace AethirMaelWebApplication.Server.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("register")]
+        public async Task<ActionResult> Register(RegisterDto registerDto)
+        {
+            // Acum 'result' contine mesajul de eroare sau "Success"
+            var result = await _authService.RegisterAsync(registerDto);
+
+            if (result = false)
+            {
+                // Returnam 400 Bad Request cu mesajul specific (ex: CNP duplicat)
+                return BadRequest(result);
+            }
+
+            return Ok(new { message = "Înregistrare reușită! Te poți loga acum." });
+        }
     }
 }

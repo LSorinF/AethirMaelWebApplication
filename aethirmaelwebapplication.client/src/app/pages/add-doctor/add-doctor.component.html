@@ -1,0 +1,63 @@
+<div class="min-h-[calc(100vh-64px)] flex items-center justify-center bg-mystic-pale p-6">
+
+  <mat-card class="w-full max-w-lg p-8 shadow-xl border-t-4 border-mystic-primary">
+
+    <h2 class="text-2xl font-bold text-mystic-dark mb-6 flex items-center gap-2">
+      <mat-icon>person_add</mat-icon> Adaugă Medic Nou
+    </h2>
+
+    <form (ngSubmit)="onSubmit()" #docForm="ngForm" class="flex flex-col gap-4">
+
+      <!-- Nume -->
+      <div class="flex gap-4">
+        <mat-form-field appearance="outline" class="w-1/2">
+          <mat-label>Nume</mat-label>
+          <input matInput name="lastName" [(ngModel)]="doctorData.lastName" required placeholder="Ex: Ionescu">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="w-1/2">
+          <mat-label>Prenume</mat-label>
+          <input matInput name="firstName" [(ngModel)]="doctorData.firstName" required placeholder="Ex: Andrei">
+        </mat-form-field>
+      </div>
+
+      <!-- Specializare -->
+      <mat-form-field appearance="outline">
+        <mat-label>Specializare</mat-label>
+        <mat-select name="specializationId" [(ngModel)]="doctorData.specializationId" required>
+          <mat-option *ngFor="let spec of specializations" [value]="spec.specializationId">
+            {{ spec.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Contact -->
+      <mat-form-field appearance="outline">
+        <mat-label>Telefon</mat-label>
+        <input matInput name="phone" [(ngModel)]="doctorData.phone" required>
+        <mat-icon matSuffix>phone</mat-icon>
+      </mat-form-field>
+
+      <!-- Login Info -->
+      <mat-form-field appearance="outline">
+        <mat-label>Email (Login)</mat-label>
+        <input matInput name="email" [(ngModel)]="doctorData.email" required email>
+        <mat-icon matSuffix>email</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Parolă Cont</mat-label>
+        <input matInput name="password" [(ngModel)]="doctorData.password" required type="password">
+        <mat-icon matSuffix>key</mat-icon>
+      </mat-form-field>
+
+      <button mat-raised-button
+              class="!bg-mystic-primary !text-white !py-6 !text-lg mt-4"
+              [disabled]="docForm.invalid || isLoading"
+              type="submit">
+        <span *ngIf="!isLoading">Salvează Medic</span>
+        <span *ngIf="isLoading">Se procesează...</span>
+      </button>
+
+    </form>
+  </mat-card>
+</div>

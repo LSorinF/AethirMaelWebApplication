@@ -17,12 +17,12 @@
       </p>
 
       <div class="flex flex-wrap justify-center gap-6">
-        <button mat-raised-button class="!bg-mystic-accent !text-white !text-lg !px-8 !py-3 !rounded-full shadow-lg hover:!bg-mystic-primary transition-all">
+        <button mat-raised-button routerLink="/medici" class="!bg-mystic-accent !text-white !text-lg !px-8 !py-3 !rounded-full shadow-lg hover:!bg-mystic-primary transition-all">
           Fă o Programare
         </button>
 
-        <button mat-stroked-button class="!border-mystic-light !text-mystic-light hover:!bg-mystic-dark/30 !text-lg !px-8 !py-3 !rounded-full transition-all">
-          Discută cu AI-ul
+        <button mat-stroked-button class="!border-mystic-light !text-mystic-light hover:!bg-mystic-dark/30 !text-lg !px-8 !py-3 !rounded-full transition-all" (click)="openChatBot()">
+          Discută cu Maël
         </button>
       </div>
     </div>

@@ -1,0 +1,55 @@
+<h2 mat-dialog-title class="!text-mystic-dark">
+  Programare la Dr. {{ data.doctor.lastName }} {{ data.doctor.firstName }}
+</h2>
+
+<mat-dialog-content class="flex flex-col gap-4 min-w-[350px]">
+
+  <p class="text-gray-600 text-sm">
+    Selectează data și ora dorită pentru consultație.
+  </p>
+
+  <!-- DATEPICKER -->
+  <mat-form-field appearance="outline" class="w-full mt-2">
+    <mat-label>Data Programării</mat-label>
+
+    <!-- ADĂUGAT: [min]="minDate" -->
+    <!-- Aceasta blochează toate datele anterioare zilei de azi -->
+    <input matInput [matDatepicker]="picker"
+           [matDatepickerFilter]="weekendFilter"
+           [min]="minDate"
+           [(ngModel)]="selectedDate"
+           readonly (click)="picker.open()" class="cursor-pointer">
+
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <!-- SELECT ORĂ -->
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Ora</mat-label>
+    <mat-select [(ngModel)]="selectedTime">
+      <mat-option *ngFor="let hour of availableHours" [value]="hour">
+        {{ hour }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- NOTIȚE -->
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Simptome / Notițe (Opțional)</mat-label>
+    <textarea matInput [(ngModel)]="notes" rows="3"></textarea>
+  </mat-form-field>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="pb-4 pr-4">
+  <button mat-button (click)="onCancel()" [disabled]="isLoading">Anulează</button>
+
+  <button mat-raised-button
+          class="!bg-mystic-accent !text-white"
+          (click)="onSubmit()"
+          [disabled]="isLoading">
+    <span *ngIf="!isLoading">Confirmă</span>
+    <span *ngIf="isLoading">Se trimite...</span>
+  </button>
+</mat-dialog-actions>

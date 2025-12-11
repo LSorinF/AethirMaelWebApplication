@@ -80,7 +80,7 @@ namespace AethirMaelWebApplication.Server.Data
 
                     var users = new List<User>
                     {
-                        // Admin-ul nu e legat de niciun doctor/pacient
+                        // Admin-ul nu e legat de niciun doctor/Patient
                         new User { Email = "admin@hospital.com", PasswordHash = adminHash, Role = "Admin" }, 
                         // Doctorul este legat de un DoctorId
                         new User { Email = doctor1!.Email, PasswordHash = HashPassword("doctorpass"), Role = "Doctor", DoctorId = doctor1.DoctorId }
@@ -90,11 +90,11 @@ namespace AethirMaelWebApplication.Server.Data
                 }
 
                 // ---------------------
-                // 3. ADAUGARE PACIENT DE TEST
+                // 3. ADAUGARE Patient DE TEST
                 // ---------------------
                 if (!await context.Patients.AnyAsync())
                 {
-                    var patient = new Patient
+                    var Patient = new Patient
                     {
                         FirstName = "Mike",
                         LastName = "Wazowski",
@@ -103,16 +103,16 @@ namespace AethirMaelWebApplication.Server.Data
                         Email = "mike@test.com",
                         Phone = "0700555666"
                     };
-                    await context.Patients.AddAsync(patient);
+                    await context.Patients.AddAsync(Patient);
                     await context.SaveChangesAsync();
 
-                    // Adaugare utilizator pentru pacient
+                    // Adaugare utilizator pentru Patient
                     var patientUser = new User
                     {
-                        Email = patient.Email,
-                        PasswordHash = HashPassword("patientpass"),
+                        Email = Patient.Email,
+                        PasswordHash = HashPassword("Patientpass"),
                         Role = "Patient",
-                        PatientId = patient.PatientId
+                        PatientId = Patient.PatientId
                     };
                     await context.Users.AddAsync(patientUser);
                     await context.SaveChangesAsync();

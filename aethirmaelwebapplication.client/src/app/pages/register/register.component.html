@@ -1,0 +1,89 @@
+<div class="min-h-[calc(100vh-64px)] flex items-center justify-center bg-mystic-pale px-4 py-8">
+
+  <mat-card class="w-full max-w-md p-6 shadow-xl border-t-4 border-mystic-accent">
+
+    <div class="text-center mb-6">
+      <div class="bg-mystic-accent/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-mystic-accent">
+        <mat-icon class="text-3xl scale-150">person_add</mat-icon>
+      </div>
+      <h2 class="text-2xl font-bold text-mystic-dark">Creare Cont</h2>
+      <p class="text-gray-500">Completează datele medicale</p>
+    </div>
+
+    <form (ngSubmit)="onRegister()" #regForm="ngForm" class="flex flex-col gap-3">
+
+      <!-- Nume si Prenume -->
+      <div class="flex gap-3">
+        <mat-form-field appearance="outline" class="w-1/2">
+          <mat-label>Nume</mat-label>
+          <input matInput name="lastName" [(ngModel)]="userData.lastName" required placeholder="Popescu">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-1/2">
+          <mat-label>Prenume</mat-label>
+          <input matInput name="firstName" [(ngModel)]="userData.firstName" required placeholder="Ion">
+        </mat-form-field>
+      </div>
+
+      <!-- CNP si Telefon -->
+      <div class="flex gap-3">
+        <mat-form-field appearance="outline" class="w-1/2">
+          <mat-label>CNP</mat-label>
+          <input matInput name="cnp" [(ngModel)]="userData.cnp" required minlength="13" maxlength="13" placeholder="199...">
+          <mat-icon matSuffix>badge</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-1/2">
+          <mat-label>Telefon</mat-label>
+          <input matInput name="phone" [(ngModel)]="userData.phone" required placeholder="07...">
+          <mat-icon matSuffix>phone</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Data Nasterii (Datepicker) -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Data Nașterii</mat-label>
+        <input matInput [matDatepicker]="picker" name="dateOfBirth" [(ngModel)]="userData.dateOfBirth" required>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Email -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" name="email" [(ngModel)]="userData.email" required email placeholder="ion@exemplu.com">
+        <mat-icon matSuffix>email</mat-icon>
+      </mat-form-field>
+
+      <!-- Parole -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Parolă</mat-label>
+        <input matInput type="password" name="password" [(ngModel)]="userData.password" required minlength="6">
+        <mat-icon matSuffix>key</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Confirmă Parola</mat-label>
+        <input matInput type="password" name="confirmPassword" [(ngModel)]="userData.confirmPassword" required>
+        <mat-icon matSuffix>lock_reset</mat-icon>
+      </mat-form-field>
+
+      <button mat-raised-button
+              class="!bg-mystic-accent !text-white !py-6 !text-lg mt-4"
+              [disabled]="regForm.invalid || isLoading"
+              type="submit">
+        <span *ngIf="!isLoading">Înregistrează-te</span>
+        <span *ngIf="isLoading">Se creează contul...</span>
+      </button>
+
+    </form>
+
+    <div class="mt-6 text-center text-sm text-gray-600">
+      Ai deja cont?
+      <a routerLink="/login" class="text-mystic-primary font-bold hover:underline cursor-pointer">
+        Loghează-te aici
+      </a>
+    </div>
+
+  </mat-card>
+</div>

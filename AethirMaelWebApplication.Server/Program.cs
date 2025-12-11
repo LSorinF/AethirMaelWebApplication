@@ -1,5 +1,6 @@
 ﻿using AethirMaelWebApplication.Server.Data;
 using AethirMaelWebApplication.Server.Services;
+using AethirMaelWebApplication.Server.Hubs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -35,6 +36,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<DoctorService>();
+builder.Services.AddScoped<AppointmentService>();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -83,6 +87,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.MapFallbackToFile("/index.html");
 

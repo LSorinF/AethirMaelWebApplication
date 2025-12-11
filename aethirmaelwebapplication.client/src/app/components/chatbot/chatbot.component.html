@@ -1,0 +1,63 @@
+<!-- BUTONUL FLOTANT (Deschide/Inchide) -->
+<button mat-fab
+        class="!fixed !bottom-6 !right-6 !z-50 !bg-mystic-accent !text-white shadow-2xl transition-transform hover:scale-110"
+        (click)="toggleChat()">
+  <mat-icon *ngIf="!isOpen">smart_toy</mat-icon>
+  <mat-icon *ngIf="isOpen">close</mat-icon>
+</button>
+
+<!-- FEREASTRA DE CHAT -->
+<div *ngIf="isOpen"
+     class="fixed bottom-24 right-6 w-96 h-[500px] z-50 bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 animate-fade-in-up">
+
+  <!-- Header -->
+  <div class="bg-mystic-dark p-4 flex items-center gap-3 shadow-md">
+    <div class="bg-white/10 p-2 rounded-full">
+      <mat-icon class="text-white">smart_toy</mat-icon>
+    </div>
+    <div>
+      <h3 class="text-white font-bold m-0 text-lg">Asistent Maël</h3>
+      <p class="text-mystic-light text-xs m-0 flex items-center gap-1">
+        <span class="w-2 h-2 rounded-full bg-green-400 inline-block animate-pulse"></span> Online
+      </p>
+    </div>
+  </div>
+
+  <!-- Zona Mesaje -->
+  <div class="flex-1 p-4 overflow-y-auto bg-gray-50 flex flex-col gap-3" #scrollContainer>
+
+    <div *ngFor="let msg of messages"
+         class="max-w-[80%] p-3 rounded-2xl text-sm shadow-sm relative animate-fade-in"
+         [ngClass]="{
+           'self-end bg-mystic-primary text-white rounded-tr-none': msg.isUser,
+           'self-start bg-white text-gray-800 border border-gray-200 rounded-tl-none': !msg.isUser
+         }">
+      {{ msg.text }}
+      <div class="text-[10px] mt-1 opacity-70 text-right">
+        {{ msg.timestamp | date:'HH:mm' }}
+      </div>
+    </div>
+
+    <!-- Indicator "Writing..." -->
+    <div *ngIf="isLoading" class="self-start bg-white p-3 rounded-2xl rounded-tl-none border border-gray-200 flex gap-1 items-center">
+      <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+      <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
+      <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+    </div>
+
+  </div>
+
+  <!-- Footer (Input) -->
+  <div class="p-3 bg-white border-t border-gray-100 flex gap-2 items-center">
+    <input type="text"
+           class="flex-1 bg-gray-100 rounded-full px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-mystic-accent transition-all"
+           placeholder="Scrie un mesaj..."
+           [(ngModel)]="userMessage"
+           (keyup.enter)="sendMessage()">
+
+    <button mat-icon-button class="text-mystic-accent hover:bg-mystic-pale" (click)="sendMessage()" [disabled]="!userMessage.trim()">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+
+</div>

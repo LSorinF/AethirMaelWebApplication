@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 
-// Definim interfata pentru raspunsul de la server (DTO-ul din C#)
+// Definim interfata
 export interface AuthResponse {
   token: string;
   role: string;
@@ -30,6 +30,10 @@ export class AuthService {
       this.currentUserSubject.next(JSON.parse(savedUser));
     }
   }
+
+  register(userData: any): Observable<any> {
+  return this.http.post(`${this.apiUrl}/register`, userData);
+}
 
   login(loginData: any): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, loginData).pipe(

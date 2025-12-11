@@ -15,7 +15,7 @@ namespace AethirMaelWebApplication.Server.Services
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration; // Avem nevoie de config pentru a citi cheia
 
-        // Injectam si IConfiguration
+
         public AuthService(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
@@ -45,9 +45,41 @@ namespace AethirMaelWebApplication.Server.Services
             };
         }
 
+        public async Task<bool> RegisterAsync(RegisterDto registerDto)
+        {
+            //Verifica daca emailul exista deja
+            if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
+                return false;
+
+            var Patient = new Patient
+            {
+                FirstName = registerDto.FirstName,
+                LastName = registerDto.LastName,
+                Email = registerDto.Email,
+                Phone = registerDto.Phone,           
+                CNP = registerDto.CNP,               
+                DateOfBirth = registerDto.DateOfBirth 
+            };
+
+            await _context.Patients.AddAsync(Patient);
+            await _context.SaveChangesAsync();
+
+            var user = new User
+            {
+                Email = registerDto.Email,
+                PasswordHash = HashPassword(registerDto.Password),
+                Role = "Patient", // Rol implicit
+                PatientId = Patient.PatientId 
+            };
+
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
         private string CreateToken(User user)
         {
-            // 1. Definim Claim-urile (informatiile din buletinul digital)
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
@@ -55,21 +87,18 @@ namespace AethirMaelWebApplication.Server.Services
                 new Claim(ClaimTypes.Role, user.Role)
             };
 
-            // Daca e pacient sau doctor, adaugam si ID-ul specific
             if (user.PatientId.HasValue)
                 claims.Add(new Claim("PatientId", user.PatientId.Value.ToString()));
 
             if (user.DoctorId.HasValue)
                 claims.Add(new Claim("DoctorId", user.DoctorId.Value.ToString()));
 
-            // 2. Luam cheia secreta din appsettings
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 _configuration.GetSection("JwtSettings:Key").Value!));
 
-            // 3. Semnam token-ul
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            // 4. Cream token-ul
+            //Cream token-ul
             var token = new JwtSecurityToken(
                 claims: claims,
                 expires: DateTime.Now.AddDays(1), // Token valabil 1 zi
@@ -77,8 +106,7 @@ namespace AethirMaelWebApplication.Server.Services
                 issuer: _configuration.GetSection("JwtSettings:Issuer").Value,
                 audience: _configuration.GetSection("JwtSettings:Audience").Value
             );
-
-            // 5. Il scriem ca string
+            //Il scriem ca string
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
             return jwt;
         }

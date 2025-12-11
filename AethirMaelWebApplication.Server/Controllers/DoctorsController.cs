@@ -1,5 +1,7 @@
-﻿using AethirMaelWebApplication.Server.Models;
+﻿using AethirMaelWebApplication.Server.DTOs;
+using AethirMaelWebApplication.Server.Models;
 using AethirMaelWebApplication.Server.Services; // Importam Serviciile
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AethirMaelWebApplication.Server.Controllers
@@ -13,6 +15,34 @@ namespace AethirMaelWebApplication.Server.Controllers
         public DoctorsController(DoctorService doctorService)
         {
             _doctorService = doctorService;
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")] // Poti decomenta asta daca vrei securitate maxima
+        public async Task<ActionResult> CreateDoctor(CreateDoctorDto dto)
+        {
+            var result = await _doctorService.CreateDoctorAsync(dto);
+
+            if (result != "Success")
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(new { message = "Medic adăugat cu succes!" });
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")] // Decomenteaza cand ai un user Admin
+        public async Task<ActionResult> DeleteDoctor(int id)
+        {
+            var result = await _doctorService.DeleteDoctorAsync(id);
+
+            if (result != "Success")
+            {
+                return BadRequest(result); // Returneaza eroarea (ex: are programari)
+            }
+
+            return Ok(new { message = "Medic șters cu succes!" });
         }
 
         [HttpGet]

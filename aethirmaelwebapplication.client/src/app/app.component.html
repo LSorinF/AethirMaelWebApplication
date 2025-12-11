@@ -1,42 +1,100 @@
-<header class="bg-mystic-dark text-mystic-pale py-4 px-6 shadow-md flex items-center justify-between sticky top-0 z-50">
+<header class="bg-mystic-dark text-mystic-pale py-3 px-6 shadow-md flex items-center justify-between sticky top-0 z-50 h-16">
 
-  <div class="flex items-center cursor-pointer" routerLink="/">
-    <span class="material-icons mr-2 text-mystic-accent font-light">local_hospital</span>
-    <h1 class="margin-0 text-xl md:text-2xl font-semibold tracking-wide">
-      AethirMael Medical
+  <!-- Logo / Titlu -->
+  <div class="flex items-center cursor-pointer gap-2" routerLink="/">
+    <span class="material-icons text-mystic-accent">local_hospital</span>
+    <h1 class="m-0 text-lg md:text-xl font-semibold tracking-wide leading-none">
+      AethirMaël Medical
     </h1>
   </div>
 
-  <nav class="flex items-center space-x-6">
-    <a routerLink="/home" routerLinkActive="text-white border-b-2 border-mystic-accent" class="text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">
+  <!-- Navigare -->
+  <nav class="flex items-center gap-6 h-full">
+
+    <!-- Link 1: Acasă -->
+    <a routerLink="/home"
+       routerLinkActive="text-white border-b-2 border-mystic-accent"
+       class="flex items-center h-full text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">
       Acasă
     </a>
-    <a routerLink="/medici" routerLinkActive="text-white border-b-2 border-mystic-accent" class="text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">
+
+    <!-- Link 2: Lista Medici -->
+    <a routerLink="/medici"
+       routerLinkActive="text-white border-b-2 border-mystic-accent"
+       class="flex items-center h-full text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">
       Lista Medici
     </a>
 
-    <!-- Daca NU ESTE logat-->
+    <!-- ZONA DINAMICĂ DE USER -->
+    <!-- Varianta 1: Vizitator (Nu e logat) -->
     <ng-container *ngIf="(authService.currentUser$ | async) === null">
-      <a routerLink="/login" class="bg-mystic-accent hover:bg-mystic-primary text-white px-4 py-2 rounded-full text-sm font-bold transition-all no-underline shadow-lg">
+      <a routerLink="/register" routerLinkActive="text-white border-b-2 border-mystic-accent" class="text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">
+        Creaza-ti Cont
+      </a>
+      <a routerLink="/login" class="flex items-center bg-mystic-accent hover:bg-mystic-primary text-white px-4 py-2 rounded-full text-sm font-bold transition-all no-underline shadow-lg ml-4">
         Login
       </a>
     </ng-container>
 
-    <!-- Daca ESTE logat -->
+    <!-- Varianta 2: Utilizator Logat -->
     <ng-container *ngIf="authService.currentUser$ | async as user">
-      <div class="flex items-center gap-4">
-        <span class="text-mystic-light text-sm hidden md:block">
-          Salut, <span class="font-bold text-white">{{ user.name }}</span>
-        </span>
-        <button (click)="logout()" class="text-red-300 hover:text-red-100 text-sm font-medium border border-red-900/30 px-3 py-1 rounded hover:bg-red-900/20 transition-all">
-          Logout
-        </button>
+
+      <!-- ICONIȚE DE ACȚIUNE (Vizibile doar pentru rolurile specifice) -->
+      <div class="flex items-center gap-4 border-l border-mystic-primary pl-6 ml-2 h-8">
+
+        <!-- Link pentru PACIENTI: Programările Mele -->
+        <!-- Am adaugat 'flex items-center' pentru a centra iconita -->
+        <a *ngIf="user.role === 'Pacient'"
+           routerLink="/programarile-mele"
+           routerLinkActive="text-mystic-accent"
+           matTooltip="Programările Mele"
+           class="flex items-center text-mystic-light hover:text-white transition-colors cursor-pointer">
+          <span class="material-icons">event_note</span>
+          <span class="flex items-center h-full text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">Programari</span>
+        </a>
+
+        <!-- Link pentru DOCTORI: Dashboard -->
+        <a *ngIf="user.role === 'Doctor'"
+           routerLink="/doctor-dashboard"
+           routerLinkActive="text-mystic-accent"
+           matTooltip="Dashboard Medic"
+           class="flex items-center text-mystic-light hover:text-white transition-colors cursor-pointer">
+          <span class="material-icons">dashboard</span>
+          <span class="flex items-center h-full text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">Dashboard</span>
+        </a>
+
+        <!-- Link pentru ADMIN: Panou Admin -->
+        <a *ngIf="user.role === 'Admin'"
+           routerLink="/add-doctor"
+           routerLinkActive="text-mystic-accent"
+           matToolTip="Adauga Doctor"
+           class="flex items-center text-mystic-light hover:text-white transition-colors cursor-pointer">
+          <span class="material-icons">add</span>
+          <span class="flex items-center h-full text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">Add Doctors</span>
+        </a>
+
+        <!-- Salut + Logout -->
+        <div class="flex items-center gap-3">
+          <span class="text-mystic-light text-sm hidden md:block">
+            Salut, <span class="font-bold text-white">{{ user.name }}</span>
+          </span>
+
+          <button (click)="logout()" class="flex items-center justify-center text-red-300 hover:text-red-100 hover:bg-red-900/20 border border-red-900/30 rounded p-1 transition-all" matTooltip="Deconectare">
+            <span class="material-icons text-sm">logout</span>
+            <span class="flex items-center justify-center rounded p-1 transition-all text-sm">Logout</span>
+          </button>
+        </div>
+
       </div>
     </ng-container>
 
   </nav>
 </header>
 
+
 <main class="bg-mystic-pale min-h-[calc(100vh-64px)]">
   <router-outlet></router-outlet>
 </main>
+
+<app-chatbot></app-chatbot>
+
