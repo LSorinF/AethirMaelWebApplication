@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { AppointmentService } from '../../services/appointment.service';
+import { Route, RouterModule } from "@angular/router";
 
 // Material Imports
 import { MatCardModule } from '@angular/material/card';
@@ -21,6 +22,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatChipsModule,
     MatTabsModule,
     MatProgressSpinnerModule,
+    RouterModule,
     DatePipe
   ],
   templateUrl: './my-appointments.component.html'

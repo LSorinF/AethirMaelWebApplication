@@ -1,0 +1,40 @@
+<h2 mat-dialog-title class="!text-mystic-dark">
+  <span *ngIf="!isEditMode">Fișă Nouă: {{ data.patientName }}</span>
+  <span *ngIf="isEditMode">Editare Fișă</span>
+</h2>
+
+<mat-dialog-content class="flex flex-col gap-4 min-w-[400px]">
+
+  <p class="text-gray-500 text-sm">
+    {{ isEditMode ? 'Modifică detaliile fișei existente.' : 'Completează detaliile consultației.' }}
+  </p>
+
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Simptome</mat-label>
+    <textarea matInput [(ngModel)]="recordData.symptoms" rows="2" required placeholder="Ex: Durere cap, febră"></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Diagnostic</mat-label>
+    <input matInput [(ngModel)]="recordData.diagnosis" required placeholder="Ex: Gripă sezonieră">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Tratament / Rețetă</mat-label>
+    <textarea matInput [(ngModel)]="recordData.treatment" rows="3" required placeholder="Ex: Paracetamol 500mg..."></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="w-full">
+    <mat-label>Rezultate Analize (Opțional)</mat-label>
+    <textarea matInput [(ngModel)]="recordData.investigationResults" rows="2"></textarea>
+  </mat-form-field>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="pb-4 pr-4">
+  <button mat-button [mat-dialog-close]="false">Anulează</button>
+  <button mat-raised-button class="!bg-mystic-accent !text-white" (click)="onSubmit()" [disabled]="isLoading">
+    <span *ngIf="!isLoading">{{ isEditMode ? 'Actualizează' : 'Salvează & Finalizează' }}</span>
+    <span *ngIf="isLoading">Se procesează...</span>
+  </button>
+</mat-dialog-actions>

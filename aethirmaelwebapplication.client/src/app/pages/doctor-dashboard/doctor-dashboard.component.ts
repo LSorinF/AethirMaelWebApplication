@@ -8,20 +8,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTabsModule } from '@angular/material/tabs'; // <--- IMPORT NOU
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
+import { AddRecordDialogComponent } from '../../components/add-record-dialog/add-record-dialog.component';
+import { HistoryDialogComponent } from '../../components/history-dialog/history-dialog.component';
 
 @Component({
   selector: 'app-doctor-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatChipsModule,
-    MatTabsModule, // <--- ADAUGAT
-    MatProgressSpinnerModule,
+    CommonModule, MatCardModule, MatButtonModule, MatIconModule,
+    MatChipsModule, MatTabsModule, MatProgressSpinnerModule, MatDialogModule,
     DatePipe
   ],
   templateUrl: './doctor-dashboard.component.html'
@@ -33,7 +32,8 @@ export class DoctorDashboardComponent implements OnInit {
 
   constructor(
     private appService: AppointmentService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -45,37 +45,53 @@ export class DoctorDashboardComponent implements OnInit {
     this.appService.getDoctorAppointments().subscribe({
       next: (data) => {
         const now = new Date();
-
-        // LOGICA DE FILTRARE:
-        // 1. Viitoare: Data >= Acum (Indiferent de status, aici vedem ce avem de munca)
         this.upcomingAppointments = data.filter(a => new Date(a.appointmentDate) >= now);
-
-        // 2. Istoric: Data < Acum
         this.pastAppointments = data.filter(a => new Date(a.appointmentDate) < now);
 
-        // Sortare: Cele viitoare sa fie cronologic (cea mai apropiata prima)
         this.upcomingAppointments.sort((a, b) => new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime());
-
-        // Sortare: Cele vechi sa fie invers cronologic (cea mai recenta prima)
         this.pastAppointments.sort((a, b) => new Date(b.appointmentDate).getTime() - new Date(a.appointmentDate).getTime());
 
         this.isLoading = false;
       },
-      error: () => {
-        this.snackBar.open('Eroare la încărcarea datelor.', 'X');
-        this.isLoading = false;
-      }
+      error: () => this.isLoading = false
     });
   }
 
   changeStatus(id: number, status: string) {
     this.appService.updateStatus(id, status).subscribe({
       next: () => {
-        const msg = status === 'Confirmată' ? 'Programare acceptată!' : 'Programare respinsă.';
-        this.snackBar.open(msg, 'OK', { duration: 3000, panelClass: status === 'Confirmată' ? ['bg-green-600', 'text-white'] : ['bg-red-500', 'text-white'] });
-        this.loadAppointments(); // Reincarcam listele pentru a actualiza UI-ul
+        this.snackBar.open(`Status actualizat: ${status}`, 'OK', { duration: 3000 });
+        this.loadAppointments();
       },
-      error: () => this.snackBar.open('Eroare la actualizare.', 'X')
+      error: () => this.snackBar.open('Eroare.', 'X')
+    });
+  }
+
+  openAddRecord(app: any) {
+    const dialogRef = this.dialog.open(AddRecordDialogComponent, {
+      width: '500px',
+      data: {
+        appointmentId: app.appointmentId,
+        patientId: app.patientId,
+        patientName: app.patientName
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadAppointments();
+      }
+    });
+  }
+
+  // Metoda de vazut instoricul medical
+  viewHistory(app: any) {
+    this.dialog.open(HistoryDialogComponent, {
+      width: '600px',
+      data: {
+        patientId: app.patientId,
+        patientName: app.patientName
+      }
     });
   }
 }

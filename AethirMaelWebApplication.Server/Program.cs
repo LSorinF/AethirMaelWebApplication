@@ -37,6 +37,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<DoctorService>();
 builder.Services.AddScoped<AppointmentService>();
+builder.Services.AddScoped<MedicalRecordService>();
+builder.Services.AddScoped<AdminService>();
 
 builder.Services.AddSignalR();
 

@@ -107,7 +107,7 @@
       <!-- Actiuni / Status -->
       <div class="flex items-center gap-3">
 
-        <!-- Butoane ACTIVE doar pentru 'Solicitata' -->
+        <!-- Butoane Solicitare -->
         <div *ngIf="app.status === 'Solicitata'" class="flex flex-col sm:flex-row gap-2">
           <button mat-flat-button class="!bg-green-600 !text-white" (click)="changeStatus(app.appointmentId, 'Confirmată')">
             <mat-icon>check</mat-icon> Acceptă
@@ -117,9 +117,30 @@
           </button>
         </div>
 
-        <!-- Doar Status pentru restul -->
+        <!-- ZONA DE ACȚIUNE CONFIRMATĂ/FINALIZATĂ -->
+        <div *ngIf="app.status === 'Confirmată' || app.status === 'Finalizată'" class="flex gap-2">
+
+          <!-- Buton Completare  -->
+          <button *ngIf="app.status === 'Confirmată'"
+                  mat-stroked-button
+                  class="!text-mystic-primary !border-mystic-primary"
+                  (click)="openAddRecord(app)">
+            <mat-icon>post_add</mat-icon> Completează Fișă
+          </button>
+
+          <!--  Vezi Istoric  -->
+          <button mat-icon-button
+                  class="!text-gray-500 hover:!text-mystic-primary"
+                  matTooltip="Vezi Istoric Pacient"
+                  (click)="viewHistory(app)">
+            <mat-icon>history</mat-icon>
+          </button>
+        </div>
+
+        <!-- Status Chips -->
         <mat-chip-set *ngIf="app.status !== 'Solicitata'">
           <mat-chip [class.bg-green-100]="app.status === 'Confirmată'"
+                    [class.bg-blue-100]="app.status === 'Finalizată'"
                     [class.bg-red-100]="app.status === 'Anulată'"
                     class="font-bold">
             {{ app.status }}

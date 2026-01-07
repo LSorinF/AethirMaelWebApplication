@@ -1,0 +1,71 @@
+<div class="min-h-screen bg-mystic-pale p-8">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-3xl font-bold text-mystic-dark flex items-center">
+        <mat-icon class="mr-3 scale-150 text-mystic-accent">admin_panel_settings</mat-icon>
+        Administrare Utilizatori
+      </h2>
+
+      <a mat-raised-button class="!bg-mystic-primary !text-white" routerLink="/add-doctor">
+        <mat-icon>person_add</mat-icon> Adaugă Medic Nou
+      </a>
+    </div>
+
+    <mat-card class="!rounded-xl shadow-lg overflow-hidden">
+      <table mat-table [dataSource]="users" class="w-full">
+
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef> ID </th>
+          <td mat-cell *matCellDef="let user"> #{{user.userId}} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Nume Complet </th>
+          <td mat-cell *matCellDef="let user" class="font-bold text-gray-700"> {{user.fullName}} </td>
+        </ng-container>
+
+        <!-- Email Column -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef> Email </th>
+          <td mat-cell *matCellDef="let user" class="text-gray-500"> {{user.email}} </td>
+        </ng-container>
+
+        <!-- Role Column -->
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef> Rol </th>
+          <td mat-cell *matCellDef="let user">
+            <span class="px-3 py-1 rounded-full text-xs font-bold"
+                  [ngClass]="{
+                    'bg-blue-100 text-blue-800': user.role === 'Doctor',
+                    'bg-green-100 text-green-800': user.role === 'Pacient' || user.role === 'Patient',
+                    'bg-purple-100 text-purple-800': user.role === 'Admin'
+                  }">
+              {{user.role}}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> Acțiuni </th>
+          <td mat-cell *matCellDef="let user">
+            <button *ngIf="user.role !== 'Admin'"
+                    mat-icon-button
+                    color="warn"
+                    (click)="deleteUser(user)"
+                    matTooltip="Șterge definitiv">
+              <mat-icon>delete_forever</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-gray-50"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50 transition-colors"></tr>
+      </table>
+    </mat-card>
+
+  </div>
+</div>

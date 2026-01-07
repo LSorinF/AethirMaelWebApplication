@@ -14,28 +14,26 @@ namespace AethirMaelWebApplication.Server.Services
             _context = context;
         }
 
-        // --- 1. Programările Doctorului (Folosim DOCTOR / DoctorId) ---
+        // --- 1. Programările Doctorului ---
         public async Task<List<object>> GetDoctorAppointmentsAsync(int userId)
         {
-            // Folosim Doctor
             var user = await _context.Users.Include(u => u.Doctor).FirstOrDefaultAsync(u => u.UserId == userId);
 
-            // Verificam DoctorId
             if (user?.DoctorId == null) return new List<object>();
 
-            // Pasul 1: Aducem datele din DB (Async)
             var appointments = await _context.Appointments
-                .Include(a => a.Patient) // Folosim Patient
-                .Where(a => a.DoctorId == user.DoctorId) // Folosim DoctorId
+                .Include(a => a.Patient)
+                .Where(a => a.DoctorId == user.DoctorId)
                 .OrderBy(a => a.AppointmentDate)
                 .Select(a => new
                 {
-                    a.AppointmentId,
-                    a.AppointmentDate,
-                    // Folosim Patient pentru nume
-                    PatientName = a.Patient.LastName + " " + a.Patient.FirstName,
-                    a.Status,
-                    a.PatientNotes
+                    // Folosim nume explicite pentru a evita confuzia JSON
+                    appointmentId = a.AppointmentId,
+                    appointmentDate = a.AppointmentDate,
+                    patientName = a.Patient.LastName + " " + a.Patient.FirstName,
+                    patientId = a.Patient.PatientId,
+                    status = a.Status,
+                    patientNotes = a.PatientNotes
                 })
                 .ToListAsync();
 
@@ -56,19 +54,21 @@ namespace AethirMaelWebApplication.Server.Services
         // --- 3. Creare Programare ---
         public async Task<string> CreateAppointmentAsync(CreateAppointmentDto dto, int userId)
         {
-            // Folosim Patient
             var user = await _context.Users.Include(u => u.Patient).FirstOrDefaultAsync(u => u.UserId == userId);
 
-            // Folosim PatientId
-            if (user?.PatientId == null) return "Eroare profil Patient.";
+            if (user?.PatientId == null) return "Eroare profil pacient.";
 
+            // Validare Trecut
+            if (dto.AppointmentDate < DateTime.Now) return "Nu poți face o programare în trecut.";
+
+            // Validare Weekend
             if (dto.AppointmentDate.DayOfWeek == DayOfWeek.Saturday ||
                 dto.AppointmentDate.DayOfWeek == DayOfWeek.Sunday)
             {
                 return "Clinica este închisă în weekend.";
             }
 
-            // Folosim DoctorId
+            // Validare Medic Ocupat
             var isBusy = await _context.Appointments.AnyAsync(a =>
                 a.DoctorId == dto.DoctorId &&
                 a.AppointmentDate == dto.AppointmentDate
@@ -78,7 +78,6 @@ namespace AethirMaelWebApplication.Server.Services
 
             var appointment = new Appointment
             {
-                // Setam DoctorId si PatientId
                 DoctorId = dto.DoctorId,
                 PatientId = user.PatientId.Value,
                 AppointmentDate = dto.AppointmentDate,
@@ -92,29 +91,30 @@ namespace AethirMaelWebApplication.Server.Services
             return "Success";
         }
 
-        // --- 4. Programările Mele (Patient) ---
+        // --- 4. Programările Mele (Pacient) ---
         public async Task<List<object>> GetMyAppointmentsAsync(int userId)
         {
-            // Extragem PatientId
-            var PatientId = await _context.Users
+            // 1. Găsim ID-ul pacientului asociat userului logat
+            var patientId = await _context.Users
                 .Where(u => u.UserId == userId)
                 .Select(u => u.PatientId)
                 .FirstOrDefaultAsync();
 
-            if (PatientId == null) return new List<object>();
+            if (patientId == null) return new List<object>();
 
+            // 2. Aducem programările
             var appointments = await _context.Appointments
-                .Include(a => a.Doctor) // Folosim Doctor
-                .Where(a => a.PatientId == PatientId) // Folosim PatientId
+                .Include(a => a.Doctor)
+                .Where(a => a.PatientId == patientId)
                 .OrderByDescending(a => a.AppointmentDate)
                 .Select(a => new
                 {
-                    a.AppointmentId,
-                    a.AppointmentDate,
-                    // Folosim Doctor pentru nume
-                    DoctorName = "Dr. " + a.Doctor.LastName + " " + a.Doctor.FirstName,
-                    a.Status,
-                    a.PatientNotes
+                    // Nume proprietăți camelCase pentru a fi sigur ca Frontend-ul le vede
+                    appointmentId = a.AppointmentId,
+                    appointmentDate = a.AppointmentDate,
+                    doctorName = "Dr. " + a.Doctor.LastName + " " + a.Doctor.FirstName,
+                    status = a.Status,
+                    patientNotes = a.PatientNotes
                 })
                 .ToListAsync();
 

@@ -1,0 +1,72 @@
+<h2 mat-dialog-title class="!text-mystic-dark flex items-center gap-2">
+  <mat-icon>history</mat-icon> Istoric: {{ data.patientName }}
+</h2>
+
+<mat-dialog-content class="min-w-[450px] min-h-[300px] bg-gray-50">
+
+  <div *ngIf="isLoading" class="flex justify-center p-8">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading && records.length === 0" class="text-center p-8 text-gray-500">
+    Nu există fișe medicale anterioare pentru acest pacient.
+  </div>
+
+  <div *ngIf="!isLoading && records.length > 0" class="flex flex-col gap-3 py-2">
+    <mat-accordion multi>
+      <mat-expansion-panel *ngFor="let rec of records" class="!rounded-lg !shadow-sm border border-gray-200">
+
+        <mat-expansion-panel-header class="bg-white">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full mr-4">
+            <span class="font-bold text-mystic-primary">{{ rec.dateCreated | date:'dd MMM yyyy' }}</span>
+            <span class="text-sm text-gray-600 truncate max-w-[200px]">{{ rec.diagnosis }}</span>
+          </div>
+        </mat-expansion-panel-header>
+
+        <div class="p-3 text-sm flex flex-col gap-3 relative">
+
+          <!-- ZONA BUTOANE ACȚIUNE -->
+          <div class="absolute top-0 right-0 flex">
+            <!-- Edit -->
+            <button mat-icon-button
+                    (click)="openEdit(rec)"
+                    matTooltip="Editează Fișa"
+                    class="text-gray-400 hover:text-mystic-accent">
+              <mat-icon class="scale-75">edit</mat-icon>
+            </button>
+            <!-- Delete (NOU) -->
+            <button mat-icon-button
+                    (click)="deleteRecord(rec)"
+                    matTooltip="Șterge Fișa"
+                    class="text-gray-400 hover:text-red-600">
+              <mat-icon class="scale-75">delete</mat-icon>
+            </button>
+          </div>
+
+          <div class="pr-16">
+            <!-- Padding mai mare dreapta pt 2 butoane -->
+            <span class="font-bold text-xs uppercase text-gray-400">Simptome</span>
+            <p class="m-0 text-gray-800">{{ rec.symptoms }}</p>
+          </div>
+          <div class="pr-16">
+            <span class="font-bold text-xs uppercase text-gray-400">Tratament</span>
+            <p class="m-0 bg-green-50 p-2 rounded border border-green-100 text-green-900">{{ rec.treatment }}</p>
+          </div>
+          <div *ngIf="rec.investigationResults" class="pr-16">
+            <span class="font-bold text-xs uppercase text-gray-400">Analize</span>
+            <p class="m-0 italic text-gray-600">{{ rec.investigationResults }}</p>
+          </div>
+          <div class="text-right text-xs text-gray-400 mt-2">
+            Parafat de: {{ rec.doctorName }}
+          </div>
+        </div>
+
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="true">Închide</button>
+</mat-dialog-actions>
