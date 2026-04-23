@@ -8,6 +8,7 @@ import { DoctorDashboardComponent } from './pages/doctor-dashboard/doctor-dashbo
 import { AddDoctorComponent } from './pages/add-doctor/add-doctor.component';
 import { PatientHistoryComponent } from './pages/patient-history/patient-history.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
+import { AdminAnalyticsComponent } from './pages/admin-analytics/admin-analytics.component';
 
 
 export const routes: Routes = [
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'add-doctor', component: AddDoctorComponent, title: 'Adaugare Doctor' },
   { path: 'istoric-medical', component: PatientHistoryComponent, title: 'Dosar Medical' },
   { path: 'admin', component: AdminDashboardComponent, title: 'Admin Panel' },
+  { path: 'admin-analytics', component: AdminAnalyticsComponent, title: 'Statistici Clinica' },
   
   { path: '**', redirectTo: 'home' }
 ];

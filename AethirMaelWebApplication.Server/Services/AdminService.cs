@@ -1,6 +1,7 @@
 ﻿using AethirMaelWebApplication.Server.Data;
 using AethirMaelWebApplication.Server.DTOs;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace AethirMaelWebApplication.Server.Services
 {
@@ -66,6 +67,48 @@ namespace AethirMaelWebApplication.Server.Services
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return "Success";
+        }
+
+        public async Task<AdminDashboardStatsDto> GetDashboardStatsAsync()
+        {
+            var stats = new AdminDashboardStatsDto();
+
+            // 1. Contoare Generale
+            stats.TotalPatients = await _context.Patients.CountAsync();
+            stats.TotalDoctors = await _context.Doctors.CountAsync();
+            stats.TotalAppointments = await _context.Appointments.CountAsync();
+
+            // 2. Programări pe Luni (Ultimele 6 luni)
+            var sixMonthsAgo = DateTime.Now.AddMonths(-6);
+
+            var appointmentsData = await _context.Appointments
+                .Where(a => a.AppointmentDate >= sixMonthsAgo)
+                .GroupBy(a => new { a.AppointmentDate.Year, a.AppointmentDate.Month })
+                .Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count() })
+                .OrderBy(x => x.Year).ThenBy(x => x.Month)
+                .ToListAsync();
+
+            stats.AppointmentsPerMonth = appointmentsData.Select(x => new MonthlyStatDto
+            {
+                Month = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(x.Month) + " " + x.Year,
+                Count = x.Count
+            }).ToList();
+
+            // 3. Pacienți Noi pe Luni (Ultimele 6 luni)
+            var patientsData = await _context.Patients
+                .Where(p => p.DateCreated >= sixMonthsAgo)
+                .GroupBy(p => new { p.DateCreated.Year, p.DateCreated.Month })
+                .Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count() })
+                .OrderBy(x => x.Year).ThenBy(x => x.Month)
+                .ToListAsync();
+
+            stats.PatientsPerMonth = patientsData.Select(x => new MonthlyStatDto
+            {
+                Month = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(x.Month) + " " + x.Year,
+                Count = x.Count
+            }).ToList();
+
+            return stats;
         }
     }
 }

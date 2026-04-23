@@ -30,6 +30,8 @@ namespace AethirMaelWebApplication.Server.Models
         [MaxLength(15)]
         public string Phone { get; set; }
 
+        public DateTime DateCreated { get; set; } = DateTime.Now;
+
         // Navigation properties:
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
         public ICollection<User> Users { get; set; } = new List<User>();

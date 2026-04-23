@@ -2,6 +2,7 @@
 using AethirMaelWebApplication.Server.DTOs;
 using AethirMaelWebApplication.Server.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace AethirMaelWebApplication.Server.Services
 {
@@ -51,6 +52,20 @@ namespace AethirMaelWebApplication.Server.Services
             return true;
         }
 
+        public async Task<List<string>> GetBusySlotsAsync(int doctorId, DateTime date)
+        {
+            // Căutăm programările pentru doctor in ziua respectiva
+            var busySlots = await _context.Appointments
+                .Where(a => a.DoctorId == doctorId
+                         && a.AppointmentDate.Date == date.Date // Comparăm doar data, ignorăm ora
+                         && a.Status != "Anulată") // Ignorăm programările anulate
+                .Select(a => a.AppointmentDate)
+                .ToListAsync();
+
+            // Facem formatarea în memorie pentru siguranță
+            return busySlots.Select(d => d.ToString("HH:mm", CultureInfo.InvariantCulture)).ToList();
+        }
+
         // --- 3. Creare Programare ---
         public async Task<string> CreateAppointmentAsync(CreateAppointmentDto dto, int userId)
         {
@@ -70,9 +85,10 @@ namespace AethirMaelWebApplication.Server.Services
 
             // Validare Medic Ocupat
             var isBusy = await _context.Appointments.AnyAsync(a =>
-                a.DoctorId == dto.DoctorId &&
-                a.AppointmentDate == dto.AppointmentDate
-            );
+               a.DoctorId == dto.DoctorId &&
+               a.AppointmentDate == dto.AppointmentDate &&
+               a.Status != "Anulată" 
+           );
 
             if (isBusy) return "Medicul are deja o altă programare la această oră.";
 

@@ -1,11 +1,12 @@
 ﻿using AethirMaelWebApplication.Server.Data;
-using AethirMaelWebApplication.Server.Services;
 using AethirMaelWebApplication.Server.Hubs;
-using Microsoft.EntityFrameworkCore;
+using AethirMaelWebApplication.Server.Services;
+using AethirMaelWebApplication.Server.Workers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text.Json.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,8 @@ builder.Services.AddScoped<DoctorService>();
 builder.Services.AddScoped<AppointmentService>();
 builder.Services.AddScoped<MedicalRecordService>();
 builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<EmailService>(); // Serviciul de trimitere
+builder.Services.AddHostedService<AppointmentReminderWorker>(); //Worker pentru remindere
 
 builder.Services.AddSignalR();
 

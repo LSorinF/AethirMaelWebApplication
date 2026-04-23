@@ -10,3 +10,16 @@ html, body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+.mdc-notched-outline__notch {
+  border-right-style: none !important;
+  border-left-style: none !important;
+}
+
+.mdc-notched-outline__leading {
+  border-right-style: none !important;
+}
+
+.mdc-notched-outline__trailing {
+  border-left-style: none !important;
+}

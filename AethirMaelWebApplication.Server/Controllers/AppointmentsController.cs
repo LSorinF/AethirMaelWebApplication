@@ -54,5 +54,13 @@ namespace AethirMaelWebApplication.Server.Controllers
             if (!success) return NotFound();
             return Ok();
         }
+
+        [HttpGet("busy-slots")]
+        public async Task<ActionResult<List<string>>> GetBusySlots([FromQuery] int doctorId, [FromQuery] DateTime date)
+        {
+            // Exemplu apel: /api/Appointments/busy-slots?doctorId=5&date=2025-12-20
+            var slots = await _appointmentService.GetBusySlotsAsync(doctorId, date);
+            return Ok(slots);
+        }
     }
 }

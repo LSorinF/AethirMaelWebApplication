@@ -17,6 +17,10 @@ namespace AethirMaelWebApplication.Server.Models
         [MaxLength(500)]
         public string? PatientNotes { get; set; } // Details given by the patient/chatbot
 
+        public bool ReminderSent { get; set; } = false;
+
+        public bool ReminderTwoHoursSent { get; set; } = false;
+
         // Foreign Keys (FK)
         public int PatientId { get; set; }
         public int DoctorId { get; set; }

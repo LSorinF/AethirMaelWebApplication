@@ -26,9 +26,7 @@ namespace AethirMaelWebApplication.Server.Data
                 // Asiguram ca baza de date este creata si migrarile aplicate
                 await context.Database.MigrateAsync();
 
-                // ---------------------
-                // 1. ADAUGARE SPECIALIZARI
-                // ---------------------
+                // SPECIALIZARI
                 if (!await context.Specializations.AnyAsync())
                 {
                     var specializations = new List<Specialization>
@@ -43,9 +41,7 @@ namespace AethirMaelWebApplication.Server.Data
                     await context.SaveChangesAsync();
                 }
 
-                // ---------------------
-                // 2. ADAUGARE DOCTORI & ADMIN
-                // ---------------------
+                //DOCTORI & ADMIN
                 if (!await context.Doctors.AnyAsync())
                 {
                     // Preluam ID-urile specializarilor deja salvate
@@ -89,9 +85,8 @@ namespace AethirMaelWebApplication.Server.Data
                     await context.SaveChangesAsync();
                 }
 
-                // ---------------------
-                // 3. ADAUGARE Patient DE TEST
-                // ---------------------
+
+                // Patient DE TEST
                 if (!await context.Patients.AnyAsync())
                 {
                     var Patient = new Patient

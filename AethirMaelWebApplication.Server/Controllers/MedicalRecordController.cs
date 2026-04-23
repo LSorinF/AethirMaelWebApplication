@@ -32,7 +32,7 @@ namespace AethirMaelWebApplication.Server.Controllers
 
         // 2. GET: Istoricul Meu (Pacient)
         [HttpGet("my-history")]
-        [Authorize(Roles = "Pacient")]
+        [Authorize(Roles = "Patient")]
         public async Task<ActionResult<List<object>>> GetMyHistory()
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -40,7 +40,7 @@ namespace AethirMaelWebApplication.Server.Controllers
         }
 
         // 3. GET: Istoric Pacient Specific (Doctor)
-        [HttpGet("patient/{patientId}")]
+        [HttpGet("patient/{paientId}")]
         [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<List<object>>> GetPatientHistory(int patientId)
         {

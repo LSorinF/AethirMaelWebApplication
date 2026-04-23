@@ -43,8 +43,7 @@
       <div class="flex items-center gap-4 border-l border-mystic-primary pl-6 ml-2 h-8">
 
         <!-- Link pentru PACIENTI: Programările Mele -->
-        <!-- Am adaugat 'flex items-center' pentru a centra iconita -->
-        <a *ngIf="user.role === 'Pacient'"
+        <a *ngIf="user.role === 'Patient'"
            routerLink="/programarile-mele"
            routerLinkActive="text-mystic-accent"
            matTooltip="Programările Mele"
@@ -53,7 +52,7 @@
           <span class="flex items-center h-full text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">Programari</span>
         </a>
 
-        <a *ngIf="user.role === 'Pacient'"
+        <a *ngIf="user.role === 'Patient'"
            routerLink="/istoric-medical"
            routerLinkActive="text-mystic-accent"
            class="flex items-center text-mystic-light hover:text-white transition-colors cursor-pointer">

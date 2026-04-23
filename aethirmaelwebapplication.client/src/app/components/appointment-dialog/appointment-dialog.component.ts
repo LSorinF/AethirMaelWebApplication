@@ -8,6 +8,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Doctor } from '../../models/doctor.interface';
 import { DoctorService } from '../../services/doctor.service';
 
@@ -22,7 +23,8 @@ import { DoctorService } from '../../services/doctor.service';
     MatInputModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSelectModule
+    MatSelectModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './appointment-dialog.component.html'
 })
@@ -32,7 +34,9 @@ export class AppointmentDialogComponent {
   notes: string = '';
   isLoading = false;
 
-  // 1. Definim data minimă ca fiind "Acum"
+  checkingAvailability = false;
+  busySlots: string[] = [];
+
   minDate = new Date();
 
   availableHours = [
@@ -52,6 +56,30 @@ export class AppointmentDialogComponent {
     return day !== 0 && day !== 6;
   };
 
+  onDateChange(event: any) {
+    if (!this.selectedDate) return;
+
+    this.checkingAvailability = true;
+    this.selectedTime = '';
+    this.busySlots = [];
+
+    this.doctorService.getBusySlots(this.data.doctor.doctorId, this.selectedDate)
+      .subscribe({
+        next: (slots) => {
+          this.busySlots = slots;
+          this.checkingAvailability = false;
+        },
+        error: () => {
+          this.snackBar.open('Nu am putut verifica disponibilitatea.', 'X');
+          this.checkingAvailability = false;
+        }
+      });
+  }
+
+  isBusy(hour: string): boolean {
+    return this.busySlots.includes(hour);
+  }
+
   onCancel(): void {
     this.dialogRef.close();
   }
@@ -64,20 +92,23 @@ export class AppointmentDialogComponent {
 
     this.isLoading = true;
 
-    const finalDate = new Date(this.selectedDate);
+    const tempDate = new Date(this.selectedDate);
     const [hours, minutes] = this.selectedTime.split(':').map(Number);
-    finalDate.setHours(hours, minutes);
+    tempDate.setHours(hours, minutes);
 
-    // Validare suplimentară în Frontend: Dacă a ales ziua de azi, ora trebuie să fie în viitor
-    if (finalDate < new Date()) {
+    if (tempDate < new Date()) {
       this.snackBar.open('Nu poți selecta o oră din trecut!', 'OK', { duration: 3000, panelClass: ['bg-red-500', 'text-white'] });
       this.isLoading = false;
       return;
     }
 
+    const offsetInMinutes = tempDate.getTimezoneOffset();
+
+    const finalDate = new Date(tempDate.getTime() - (offsetInMinutes * 60000));
+
     const payload = {
       doctorId: this.data.doctor.doctorId,
-      appointmentDate: finalDate,
+      appointmentDate: finalDate, // Trimitem data ajustată
       patientNotes: this.notes
     };
 
@@ -89,8 +120,6 @@ export class AppointmentDialogComponent {
       },
       error: (err) => {
         this.isLoading = false;
-        console.error(err);
-        // Afișăm mesajul de eroare venit de la Backend (ex: "Nu poți face programări în trecut")
         const msg = err.error || 'Eroare la programare.';
         this.snackBar.open(msg, 'Închide', { duration: 3000, panelClass: ['bg-red-500', 'text-white'] });
       }

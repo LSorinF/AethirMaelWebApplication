@@ -35,4 +35,13 @@ export class DoctorService {
   deleteDoctor(doctorId: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/doctors/${doctorId}`);
   }
+
+  getBusySlots(doctorId: number, date: Date): Observable<string[]> {
+    // Convertim data la string ISO (yyyy-mm-dd) pentru a evita problemele de timezone
+    const dateString = date.getFullYear() + '-' +
+      (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+      date.getDate().toString().padStart(2, '0');
+
+    return this.http.get<string[]>(`${this.baseUrl}/appointments/busy-slots?doctorId=${doctorId}&date=${dateString}`);
+  }
 }
