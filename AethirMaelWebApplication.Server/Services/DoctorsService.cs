@@ -52,7 +52,7 @@ namespace AethirMaelWebApplication.Server.Services
                 Email = dto.Email,
                 PasswordHash = HashPassword(dto.Password),
                 Role = "Doctor",
-                DoctorId = doctor.DoctorId // CORECTAT: DoctorId (era MedicId)
+                DoctorId = doctor.DoctorId 
             };
 
             await _context.Users.AddAsync(user);
@@ -63,33 +63,28 @@ namespace AethirMaelWebApplication.Server.Services
 
         public async Task<string> DeleteDoctorAsync(int id)
         {
-            // 1. Verificam daca exista medicul
+            // Verificam daca exista medicul
             var doctor = await _context.Doctors.FindAsync(id);
             if (doctor == null) return "Medicul nu a fost găsit.";
 
-            // --- FIX PENTRU EROAREA FK_FiseMedicale_Programari ---
-            // Înainte să ștergem doctorul (care șterge automat programările),
-            // trebuie să găsim fișele medicale legate de acele programări și să le setăm AppointmentId pe NULL.
-
-            // A. Găsim ID-urile programărilor acestui doctor
+            // Gasim ID-urile programarilor
             var doctorAppointmentIds = await _context.Appointments
                 .Where(a => a.DoctorId == id)
                 .Select(a => a.AppointmentId)
                 .ToListAsync();
 
-            // B. Găsim fișele medicale care depind de aceste programări
+            // Gasim fisele medicale
             var recordsToUnlink = await _context.MedicalRecords
                 .Where(r => r.AppointmentId.HasValue && doctorAppointmentIds.Contains(r.AppointmentId.Value))
                 .ToListAsync();
 
-            // C. Rupem legătura (Setăm null)
+            // Rupem legatura setand null 
             foreach (var record in recordsToUnlink)
             {
                 record.AppointmentId = null;
             }
-            // -----------------------------------------------------
 
-            // 2. Gasim userul asociat pentru a-l sterge si pe el
+            // Stergem user-ul asociat medicului
             var user = await _context.Users.FirstOrDefaultAsync(u => u.DoctorId == id);
 
             if (user != null)
@@ -97,7 +92,7 @@ namespace AethirMaelWebApplication.Server.Services
                 _context.Users.Remove(user);
             }
 
-            // 3. Stergem medicul
+            // Stergem medicul
             _context.Doctors.Remove(doctor);
 
             try
@@ -107,7 +102,6 @@ namespace AethirMaelWebApplication.Server.Services
             }
             catch (Exception ex)
             {
-                // Prindem erorile SQL (Constraint violations)
                 return $"Eroare la ștergere: {ex.InnerException?.Message ?? ex.Message}";
             }
         }
