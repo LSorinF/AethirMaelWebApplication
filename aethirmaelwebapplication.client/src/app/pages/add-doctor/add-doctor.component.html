@@ -46,8 +46,13 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Parolă Cont</mat-label>
-        <input matInput name="password" [(ngModel)]="doctorData.password" required type="password">
+        <input matInput name="password" [(ngModel)]="doctorData.password" type="password"
+               required minlength="6" pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$" #passwordModel="ngModel">
         <mat-icon matSuffix>key</mat-icon>
+
+        <!-- Error messages -->
+        <mat-error *ngIf="passwordModel.hasError('required')">Parola este obligatorie.</mat-error>
+        <mat-error *ngIf="passwordModel.hasError('pattern')">Minim 1 majusculă, 1 număr și 1 simbol.</mat-error>
       </mat-form-field>
 
       <button mat-raised-button

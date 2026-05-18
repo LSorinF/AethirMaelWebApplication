@@ -14,7 +14,7 @@
 
       <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" animationDuration="0ms">
 
-        <!-- TAB 1: DE PROCESAT & VIITOARE -->
+        <!-- DE PROCESAT & VIITOARE -->
         <mat-tab>
           <ng-template mat-tab-label>
             <div class="flex items-center gap-2">
@@ -38,19 +38,18 @@
             </ng-container>
             <ng-template #noUpcoming>
               <div class="bg-white p-10 rounded-xl text-center border border-gray-200">
-                <mat-icon class="text-6xl text-green-200 mb-4">check_circle</mat-icon>
+                <mat-icon class="text-1xl text-green-300 mb-4">check_circle</mat-icon>
                 <p class="text-xl text-gray-600">Nu ai programări viitoare sau cereri în așteptare.</p>
               </div>
             </ng-template>
           </div>
         </mat-tab>
 
-        <!-- TAB 2: ISTORIC -->
+        <!-- ISTORIC -->
         <mat-tab label="Istoric">
           <div class="py-6">
             <ng-container *ngIf="pastAppointments.length > 0; else noPast">
               <div class="grid gap-6 opacity-80 grayscale-[0.3]">
-                <!-- Stil 'invechit' pentru istoric -->
                 <ng-container *ngFor="let app of pastAppointments">
                   <ng-container *ngTemplateOutlet="appointmentCard; context: { $implicit: app }"></ng-container>
                 </ng-container>
@@ -68,7 +67,7 @@
   </div>
 </div>
 
-<!-- ȘABLON CARD (REUTILIZABIL) -->
+<!-- CARD -->
 <ng-template #appointmentCard let-app>
   <mat-card class="!rounded-xl border-l-8 transition-all shadow-sm hover:shadow-md"
             [class.border-yellow-400]="app.status === 'Solicitata'"
@@ -106,7 +105,6 @@
 
       <!-- Actiuni / Status -->
       <div class="flex items-center gap-3">
-
         <!-- Butoane Solicitare -->
         <div *ngIf="app.status === 'Solicitata'" class="flex flex-col sm:flex-row gap-2">
           <button mat-flat-button class="!bg-green-600 !text-white" (click)="changeStatus(app.appointmentId, 'Confirmată')">

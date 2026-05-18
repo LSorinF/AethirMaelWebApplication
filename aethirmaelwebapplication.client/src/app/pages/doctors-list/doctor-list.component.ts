@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DoctorService } from '../../services/doctor.service';
 import { Doctor } from '../../models/doctor.interface';
-import { AuthService } from '../../services/auth.service'; // Importam Auth Service
+import { AuthService } from '../../services/auth.service'; 
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';

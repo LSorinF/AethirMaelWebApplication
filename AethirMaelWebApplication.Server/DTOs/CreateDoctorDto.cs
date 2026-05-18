@@ -6,15 +6,22 @@ namespace AethirMaelWebApplication.Server.DTOs
     {
         [Required]
         public string FirstName { get; set; }
+
         [Required]
         public string LastName { get; set; }
+
         [Required]
         public string Email { get; set; }
+
         [Required]
-        public string Password { get; set; } // Parola pentru cont
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$",
+            ErrorMessage = "Parola trebuie să conțină minim 6 caractere, o literă mare, un număr și un caracter special.")]
+        public string Password { get; set; }
+
         [Required]
         public string Phone { get; set; }
+
         [Required]
-        public int SpecializationId { get; set; } // Trebuie sa alegem specializarea
+        public int SpecializationId { get; set; } 
     }
 }

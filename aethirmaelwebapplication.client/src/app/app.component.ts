@@ -16,16 +16,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     public authService: AuthService,
-    private signalRService: SignalRService // Injectam
+    private signalRService: SignalRService 
   ) { }
 
   ngOnInit() {
-    // Pornim conexiunea doar daca userul este logat
     if (this.authService.isLoggedIn()) {
       this.signalRService.startConnection();
     }
 
-    // Ascultam si schimbarile de login (daca se logheaza mai tarziu)
     this.authService.currentUser$.subscribe(user => {
       if (user) {
         this.signalRService.startConnection();

@@ -42,6 +42,7 @@ builder.Services.AddScoped<MedicalRecordService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<EmailService>(); // Serviciul de trimitere
 builder.Services.AddHostedService<AppointmentReminderWorker>(); //Worker pentru remindere
+builder.Services.AddScoped<MaelAiService>();
 
 builder.Services.AddSignalR();
 

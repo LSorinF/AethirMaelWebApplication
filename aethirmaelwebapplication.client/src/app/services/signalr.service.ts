@@ -25,9 +25,6 @@ export class SignalRService {
       .withUrl(this.hubUrl, {
         // Trimitem token-ul JWT pentru autentificare
         accessTokenFactory: () => token || '',
-        // Dacă ai probleme cu certificatul self-signed în dezvoltare (uneori necesar, deși riscant)
-        // transport: signalR.HttpTransportType.WebSockets, 
-        // skipNegotiation: true
       })
       .withAutomaticReconnect()
       // ACTIVĂM LOGGING-UL DETALIAT PENTRU DEBUG
