@@ -6,7 +6,7 @@ namespace AethirMaelWebApplication.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] // Doar utilizatorii logați pot vorbi cu Maël
+    [Authorize] // Doar utilizatorii logati pot vorbi cu Mael
     public class MaelController : ControllerBase
     {
         private readonly MaelAiService _maelService;
@@ -26,10 +26,8 @@ namespace AethirMaelWebApplication.Server.Controllers
         {
             try
             {
-                // Apelează metoda din MaelAiService.cs
                 var response = await _maelService.AskMaelAsync(request.Message, User);
 
-                // Returnează rezultatul într-un obiect JSON cu proprietatea "response"
                 return Ok(new { response = response });
             }
             catch (Exception ex)

@@ -16,12 +16,11 @@
 
       <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" animationDuration="0ms">
 
-        <!-- TAB 1: VIITOARE -->
+        <!--  VIITOARE -->
         <mat-tab label="Viitoare">
           <div class="py-6">
             <ng-container *ngIf="upcomingAppointments.length > 0; else noUpcoming">
               <div class="grid gap-6">
-                <!-- Folosim sablonul definit mai jos -->
                 <ng-container *ngFor="let app of upcomingAppointments">
                   <ng-container *ngTemplateOutlet="appointmentCard; context: { $implicit: app }"></ng-container>
                 </ng-container>
@@ -39,12 +38,11 @@
           </div>
         </mat-tab>
 
-        <!-- TAB 2: ISTORIC -->
+        <!-- ISTORIC -->
         <mat-tab label="Istoric">
           <div class="py-6">
             <ng-container *ngIf="pastAppointments.length > 0; else noPast">
               <div class="grid gap-6 opacity-75">
-                <!-- Le facem putin mai sterse vizual -->
                 <ng-container *ngFor="let app of pastAppointments">
                   <ng-container *ngTemplateOutlet="appointmentCard; context: { $implicit: app }"></ng-container>
                 </ng-container>
@@ -62,7 +60,7 @@
   </div>
 </div>
 
-<!-- ȘABLON REUTILIZABIL PENTRU CARD (Ca sa nu scriem codul de 2 ori) -->
+<!-- ȘABLON REUTILIZABIL PENTRU CARD -->
 <ng-template #appointmentCard let-app>
   <mat-card class="!rounded-xl border-l-8 transition-all"
             [class.border-yellow-400]="app.status === 'Solicitata'"
@@ -95,6 +93,7 @@
         </p>
       </div>
 
+
       <!-- Status -->
       <div>
         <span class="inline-block px-4 py-1.5 rounded-full text-sm font-bold"
@@ -106,6 +105,28 @@
               }">
           {{ app.status }}
         </span>
+      </div>
+
+
+      <div *ngIf="app.status === 'Solicitata'">
+        <div class="text-center md:text-r flex-1 md:pl-8">
+          <p class="text-sm">
+            Se asteapta confirmarea.
+          </p>
+        </div>
+      </div>
+
+      <div *ngIf="app.status === 'Anulată'">
+        <div class="text-center md:text-r flex-1 md:pl-8">
+          <p class="text-sm">Doctorul este indisponibil,</p>
+          <p class="text-sm">Vă rugăm să alegeți o altă oră.</p>
+        </div>
+      </div>
+
+      <div *ngIf="app.status === 'Confirmată'">
+        <div class="text-center md:text-r flex-1 md:pl-8">
+          <p class="text-sm">Va asteptam cu drag la ora stabilita!</p>
+        </div>
       </div>
 
     </div>

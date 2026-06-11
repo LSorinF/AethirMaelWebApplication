@@ -6,11 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-// 1. Importam serviciul
 import { ChatService } from '../../services/chat.service';
-// 2. Importam HttpClient pentru apelul catre serverul AI
 import { HttpClient } from '@angular/common/http';
-// 3. ADAUGAT: Importam AuthService pentru a detecta schimbarile de cont
 import { AuthService } from '../../services/auth.service';
 
 interface ChatMessage {
@@ -35,7 +32,6 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
   isLoading = false;
   userMessage = '';
 
-  // MODIFICARE: Punem mesajul de salut separat ca sa-l putem refolosi la resetare
   private readonly initialMessage: ChatMessage = {
     text: "Salut! Sunt eu Maël, asistentul tău virtual. Cu ce te pot ajuta astăzi?",
     isUser: false,
@@ -44,7 +40,6 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
 
   messages: ChatMessage[] = [{ ...this.initialMessage }];
 
-  // Injectam AuthService alaturi de celelalte servicii
   constructor(
     public chatService: ChatService,
     private http: HttpClient,
@@ -52,17 +47,15 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
   ) { }
 
   ngOnInit() {
-    // subscribe la starea chat-ului
     this.chatService.isOpen$.subscribe(state => {
       this.isOpen = state;
     });
 
-    // ADAUGAT: Ascultăm schimbările de cont (Login / Logout / Schimbare User)
     this.authService.currentUser$.subscribe(user => {
-      // 1. Curățăm mesajele vechi și îl punem doar pe cel de salut, cu ora actualizată
+      // Curatam mesajele vechi daca utilizatorul s-a delogat
       this.messages = [{ ...this.initialMessage, timestamp: new Date() }];
 
-      // 2. Dacă utilizatorul s-a delogat complet, închidem și fereastra
+      // Inchidem fereastra
       if (!user) {
         this.chatService.close();
       }
@@ -74,7 +67,6 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
   }
 
   toggleChat() {
-    // schimbam starea chat-ului folosind serviciul
     this.chatService.toggle();
   }
 
@@ -83,7 +75,6 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
 
     const question = this.userMessage;
 
-    // Afișăm mesajul utilizatorului
     this.messages.push({
       text: question,
       isUser: true,
@@ -94,13 +85,13 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
     this.isLoading = true;
     this.scrollToBottom();
 
-    // Apelăm endpoint-ul de Backend
+    // Apelam endpoint-ul de Backend
     this.http.post<{ response: string }>('https://localhost:7145/api/Mael/ask', { message: question })
       .subscribe({
         next: (res) => {
           this.isLoading = false;
           this.messages.push({
-            text: res.response, // Răspunsul primit de la OpenAI prin intermediul C#
+            text: res.response, 
             isUser: false,
             timestamp: new Date()
           });
@@ -112,7 +103,7 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
 
           let errorMessage = "Oups! S-a produs o eroare la conectare.";
 
-          // Tratăm eroarea 401 (Neautorizat) specific pentru a îndruma pacientul
+          // Tratam eroarea 401 (Neautorizat) specific pentru a îndruma pacientul
           if (err.status === 401) {
             errorMessage = "Trebuie să te loghezi pentru a discuta cu mine. Am nevoie de acces la dosarul tău medical pentru a-ți oferi sfaturi personalizate!";
           }

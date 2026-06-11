@@ -15,7 +15,6 @@ namespace AethirMaelWebApplication.Server.Models
         [MaxLength(50)]
         public string FirstName { get; set; }
 
-        // CNP (Personal Numeric Code) must be unique
         [Required]
         [MaxLength(13)]
         public string CNP { get; set; }
@@ -32,7 +31,6 @@ namespace AethirMaelWebApplication.Server.Models
 
         public DateTime DateCreated { get; set; } = DateTime.Now;
 
-        // Navigation properties:
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
         public ICollection<User> Users { get; set; } = new List<User>();
     }

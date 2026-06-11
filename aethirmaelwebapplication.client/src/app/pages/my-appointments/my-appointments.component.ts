@@ -8,7 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatTabsModule } from '@angular/material/tabs'; // <--- IMPORT ESENȚIAL PENTRU HTML-ul NOU
+import { MatTabsModule } from '@angular/material/tabs'; 
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
@@ -37,13 +37,11 @@ export class MyAppointmentsComponent implements OnInit {
   ngOnInit() {
     this.appointmentService.getMyAppointments().subscribe({
       next: (data) => {
-        const now = new Date(); // Luăm timpul curent (ex: 10 Dec 12:04)
+        const now = new Date(); 
 
-        // LOGICA DE FILTRARE:
-        // Orice programare cu data >= acum merge la VIITOARE
+        //Filtrare viitoare și trecute
         this.upcomingAppointments = data.filter(a => new Date(a.appointmentDate) >= now);
 
-        // Orice programare cu data < acum merge la ISTORIC
         this.pastAppointments = data.filter(a => new Date(a.appointmentDate) < now);
 
         this.isLoading = false;

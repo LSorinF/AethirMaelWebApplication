@@ -14,7 +14,7 @@ namespace AethirMaelWebApplication.Server.Services
             _context = context;
         }
 
-        // 1. Doctorul creează o fișă
+        // Doctorul creeaza o fisa
         public async Task<string> CreateRecordAsync(CreateMedicalRecordDto dto, int userId)
         {
             var user = await _context.Users.Include(u => u.Doctor).FirstOrDefaultAsync(u => u.UserId == userId);
@@ -46,21 +46,19 @@ namespace AethirMaelWebApplication.Server.Services
 
         public async Task<string> UpdateRecordAsync(UpdateMedicalRecordDto dto, int userId)
         {
-            // 1. Identificăm doctorul logat
+            // Identificam doctorul logat
             var user = await _context.Users.Include(u => u.Doctor).FirstOrDefaultAsync(u => u.UserId == userId);
             if (user?.Doctor == null) return "Utilizatorul nu este doctor.";
 
-            // 2. Găsim fișa medicală
             var record = await _context.MedicalRecords.FindAsync(dto.MedicalRecordId);
             if (record == null) return "Fișa medicală nu a fost găsită.";
 
-            // 3. SECURITATE: Verificăm dacă fișa aparține acestui doctor
+            // Verifica daca fisa apartine doctorului
             if (record.DoctorId != user.Doctor.DoctorId)
             {
                 return "Nu aveți dreptul să modificați fișa creată de alt medic.";
             }
 
-            // 4. Actualizăm datele
             record.Symptoms = dto.Symptoms;
             record.Diagnosis = dto.Diagnosis;
             record.Treatment = dto.Treatment;
@@ -88,7 +86,6 @@ namespace AethirMaelWebApplication.Server.Services
                 {
                     medicalRecordId = r.MedicalRecordId,
                     dateCreated = r.DateCreated,
-                    // MODIFICARE: Verificăm dacă Doctor este null
                     doctorName = r.Doctor != null
                         ? "Dr. " + r.Doctor.LastName + " " + r.Doctor.FirstName
                         : "Medic Șters / Necunoscut",
@@ -115,7 +112,6 @@ namespace AethirMaelWebApplication.Server.Services
                {
                    medicalRecordId = r.MedicalRecordId,
                    dateCreated = r.DateCreated,
-                   // MODIFICARE: Verificăm dacă Doctor este null
                    doctorName = r.Doctor != null
                        ? "Dr. " + r.Doctor.LastName + " " + r.Doctor.FirstName
                        : "Medic Șters / Necunoscut",

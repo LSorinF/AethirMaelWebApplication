@@ -8,7 +8,7 @@ namespace AethirMaelWebApplication.Server.Services
     public class AdminService
     {
         private readonly ApplicationDbContext _context;
-        private readonly DoctorService _doctorService; // Refolosim logica de stergere medic
+        private readonly DoctorService _doctorService; 
 
         public AdminService(ApplicationDbContext context, DoctorService doctorService)
         {
@@ -27,7 +27,6 @@ namespace AethirMaelWebApplication.Server.Services
                     UserId = u.UserId,
                     Email = u.Email,
                     Role = u.Role,
-                    // Determinam numele in functie de rol
                     FullName = u.Patient != null ? u.Patient.LastName + " " + u.Patient.FirstName :
                                u.Doctor != null ? "Dr. " + u.Doctor.LastName + " " + u.Doctor.FirstName :
                                "Administrator"
@@ -48,8 +47,6 @@ namespace AethirMaelWebApplication.Server.Services
             // CAZ 1: Este DOCTOR
             if (user.Doctor != null)
             {
-                // Apelam logica speciala din DoctorService (care face unlink la fise)
-                // Nota: User-ul se sterge automat in acea metoda
                 return await _doctorService.DeleteDoctorAsync(user.Doctor.DoctorId);
             }
 
@@ -57,13 +54,12 @@ namespace AethirMaelWebApplication.Server.Services
             if (user.Patient != null)
             {
                 // Stergem entitatea Pacient. 
-                // DB Cascade va sterge automat: User-ul, Programarile si Fisele Medicale.
                 _context.Patients.Remove(user.Patient);
                 await _context.SaveChangesAsync();
                 return "Success";
             }
 
-            // CAZ 3: User orfan (fara profil)
+            // CAZ 3: Cont fara detalii 
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return "Success";
@@ -73,12 +69,12 @@ namespace AethirMaelWebApplication.Server.Services
         {
             var stats = new AdminDashboardStatsDto();
 
-            // 1. Contoare Generale
+            // Contoare Generale
             stats.TotalPatients = await _context.Patients.CountAsync();
             stats.TotalDoctors = await _context.Doctors.CountAsync();
             stats.TotalAppointments = await _context.Appointments.CountAsync();
 
-            // 2. Programări pe Luni (Ultimele 6 luni)
+            // Programari pe 6 luni
             var sixMonthsAgo = DateTime.Now.AddMonths(-6);
 
             var appointmentsData = await _context.Appointments
@@ -94,7 +90,7 @@ namespace AethirMaelWebApplication.Server.Services
                 Count = x.Count
             }).ToList();
 
-            // 3. Pacienți Noi pe Luni (Ultimele 6 luni)
+            // Pacienti noi
             var patientsData = await _context.Patients
                 .Where(p => p.DateCreated >= sixMonthsAgo)
                 .GroupBy(p => new { p.DateCreated.Year, p.DateCreated.Month })

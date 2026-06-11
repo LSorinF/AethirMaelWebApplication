@@ -9,7 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSnackBar } from '@angular/material/snack-bar'; // Import SnackBar
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { AddRecordDialogComponent } from '../add-record-dialog/add-record-dialog.component';
 
@@ -32,7 +32,7 @@ export class HistoryDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { patientId: number, patientName: string },
     private recordService: MedicalRecordService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar // Injectam SnackBar
+    private snackBar: MatSnackBar 
   ) { }
 
   ngOnInit() {
@@ -61,7 +61,6 @@ export class HistoryDialogComponent implements OnInit {
     });
   }
 
-  // --- METODA NOUĂ: DELETE ---
   deleteRecord(record: MedicalRecord) {
     if (!confirm('Sigur vrei să ștergi această fișă definitiv? Acțiunea este ireversibilă.')) return;
 

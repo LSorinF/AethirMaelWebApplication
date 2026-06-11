@@ -23,37 +23,36 @@ namespace AethirMaelWebApplication.Server.Data
             modelBuilder.Entity<Appointment>().ToTable("Programari");
             modelBuilder.Entity<MedicalRecord>().ToTable("FiseMedicale");
 
-            // --- REGULI DE ȘTERGERE (CRITIC) ---
+            // Reguli de stergere 
 
-            // 1. Ștergere Doctor -> Șterge Programări (CASCADE)
+            // Stergem doctor, stergem programarile 
             modelBuilder.Entity<Appointment>()
                 .HasOne(a => a.Doctor)
                 .WithMany(d => d.Appointments)
                 .HasForeignKey(a => a.DoctorId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // 2. Ștergere Doctor -> Păstrează Fișele, dar pune DoctorId pe NULL (SET NULL)
+            // Stergerea unui doctor NU sterge fisele medicale
             modelBuilder.Entity<MedicalRecord>()
                 .HasOne(r => r.Doctor)
                 .WithMany()
                 .HasForeignKey(r => r.DoctorId)
-                .OnDelete(DeleteBehavior.SetNull); // <--- Aici e schimbarea majoră
+                .OnDelete(DeleteBehavior.SetNull);
 
-            // 3. Ștergere Pacient -> Șterge Programări (CASCADE)
+            // Stergem pacient, stergem programarile
             modelBuilder.Entity<Appointment>()
                 .HasOne(a => a.Patient)
                 .WithMany(p => p.Appointments)
                 .HasForeignKey(a => a.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // 4. Ștergere Pacient -> Șterge Fișe Medicale (CASCADE)
+            // Stergem pacient, stergem fisele medicale
             modelBuilder.Entity<MedicalRecord>()
                 .HasOne(r => r.Patient)
-                .WithMany() // (Asumând că nu avem colecție în Patient, e ok)
+                .WithMany() 
                 .HasForeignKey(r => r.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Configurările unice existente...
             modelBuilder.Entity<Patient>().HasIndex(p => p.CNP).IsUnique();
             modelBuilder.Entity<Patient>().HasIndex(p => p.Email).IsUnique();
             modelBuilder.Entity<Doctor>().HasIndex(d => d.Email).IsUnique();

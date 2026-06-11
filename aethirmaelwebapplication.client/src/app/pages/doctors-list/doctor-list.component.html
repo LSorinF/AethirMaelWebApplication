@@ -33,7 +33,7 @@
 
     <mat-card *ngFor="let doc of doctors" class="hover:shadow-lg transition-shadow duration-300 border border-gray-100 relative">
 
-      <!-- BUTON DELETE (DOAR PENTRU ADMIN) -->
+      <!-- BUTON DELETE (ADMIN) -->
       <button *ngIf="isAdmin"
               (click)="deleteDoctor(doc)"
               mat-icon-button

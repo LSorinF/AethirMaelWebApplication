@@ -4,13 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
-// Material Imports
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-// NOI IMPORTURI PENTRU DATA
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
@@ -26,7 +24,6 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
-    // Adaugam modulele de data aici
     MatDatepickerModule,
     MatNativeDateModule
   ],
@@ -39,10 +36,9 @@ export class RegisterComponent {
     email: '',
     password: '',
     confirmPassword: '',
-    // Campuri noi
     phone: '',
     cnp: '',
-    dateOfBirth: null // Va fi un obiect Date
+    dateOfBirth: null 
   };
   isLoading = false;
 
@@ -58,7 +54,6 @@ export class RegisterComponent {
       return;
     }
 
-    // Validare simplă ca să nu trimitem date goale
     if(!this.userData.cnp || !this.userData.phone || !this.userData.dateOfBirth) {
         this.snackBar.open('Toate câmpurile sunt obligatorii!', 'OK', { duration: 3000 });
         return;
@@ -72,7 +67,6 @@ export class RegisterComponent {
       lastName: this.userData.lastName,
       email: this.userData.email,
       password: this.userData.password,
-      // Trimitem noile campuri
       cnp: this.userData.cnp,
       phone: this.userData.phone,
       dateOfBirth: this.userData.dateOfBirth
@@ -87,7 +81,7 @@ export class RegisterComponent {
       error: (err) => {
         this.isLoading = false;
         console.error(err);
-        // Afisam mesajul de eroare de la server daca exista
+        // Afisam mesajul de eroare server
         const errorMsg = err.error || 'A apărut o eroare la înregistrare.';
         this.snackBar.open(errorMsg, 'Închide', { duration: 3000, panelClass: ['bg-red-500', 'text-white'] });
       }

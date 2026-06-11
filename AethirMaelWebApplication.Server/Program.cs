@@ -40,8 +40,8 @@ builder.Services.AddScoped<DoctorService>();
 builder.Services.AddScoped<AppointmentService>();
 builder.Services.AddScoped<MedicalRecordService>();
 builder.Services.AddScoped<AdminService>();
-builder.Services.AddScoped<EmailService>(); // Serviciul de trimitere
-builder.Services.AddHostedService<AppointmentReminderWorker>(); //Worker pentru remindere
+builder.Services.AddScoped<EmailService>(); 
+builder.Services.AddHostedService<AppointmentReminderWorker>(); 
 builder.Services.AddScoped<MaelAiService>();
 
 builder.Services.AddSignalR();
@@ -58,8 +58,8 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
             .GetBytes(builder.Configuration.GetSection("JwtSettings:Key").Value!)),
-        ValidateIssuer = false, // Pentru simplitate in dev
-        ValidateAudience = false // Pentru simplitate in dev
+        ValidateIssuer = false, 
+        ValidateAudience = false 
     };
 });
 

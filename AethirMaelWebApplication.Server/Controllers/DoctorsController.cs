@@ -1,6 +1,6 @@
 ﻿using AethirMaelWebApplication.Server.DTOs;
 using AethirMaelWebApplication.Server.Models;
-using AethirMaelWebApplication.Server.Services; // Importam Serviciile
+using AethirMaelWebApplication.Server.Services; 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +18,7 @@ namespace AethirMaelWebApplication.Server.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")] // Poti decomenta asta daca vrei securitate maxima
+        [Authorize(Roles = "Admin")] 
         public async Task<ActionResult> CreateDoctor(CreateDoctorDto dto)
         {
             var result = await _doctorService.CreateDoctorAsync(dto);
@@ -32,14 +32,14 @@ namespace AethirMaelWebApplication.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")] // Decomenteaza cand ai un user Admin
+        [Authorize(Roles = "Admin")] 
         public async Task<ActionResult> DeleteDoctor(int id)
         {
             var result = await _doctorService.DeleteDoctorAsync(id);
 
             if (result != "Success")
             {
-                return BadRequest(result); // Returneaza eroarea (ex: are programari)
+                return BadRequest(result); 
             }
 
             return Ok(new { message = "Medic șters cu succes!" });
@@ -55,7 +55,6 @@ namespace AethirMaelWebApplication.Server.Controllers
             }
             catch (Exception)
             {
-                // Putem loga eroarea aici
                 return StatusCode(500, "A aparut o eroare interna.");
             }
         }

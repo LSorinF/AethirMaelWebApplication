@@ -40,7 +40,7 @@
         </mat-form-field>
       </div>
 
-      <!-- Data Nasterii (Datepicker) -->
+      <!-- Data Nasterii  -->
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Data Nașterii</mat-label>
         <input matInput [matDatepicker]="picker" name="dateOfBirth" [(ngModel)]="userData.dateOfBirth" required>
@@ -58,7 +58,6 @@
       <!-- Parole -->
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Parolă</mat-label>
-        <!-- pattern and pass model -->
         <input matInput type="password" name="password" [(ngModel)]="userData.password"
                required minlength="6" pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$" #passwordModel="ngModel">
         <mat-icon matSuffix>key</mat-icon>

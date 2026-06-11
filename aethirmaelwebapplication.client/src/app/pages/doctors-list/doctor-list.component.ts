@@ -73,7 +73,7 @@ export class DoctorListComponent implements OnInit {
     });
   }
 
-  // --- FUNCȚIE NOUĂ: DELETE ---
+  // Delete
   deleteDoctor(doctor: Doctor) {
     if (!confirm(`Sigur vrei să ștergi medicul Dr. ${doctor.lastName}?`)) return;
 

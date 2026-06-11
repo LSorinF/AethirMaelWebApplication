@@ -27,11 +27,9 @@ namespace AethirMaelWebApplication.Server.Workers
                         var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
                         var now = DateTime.Now;
 
-                        // ---------------------------------------------------------
-                        // CAZUL 1: Reminder de 24 ORE (Ziua următoare)
-                        // ---------------------------------------------------------
+                        //Reminder 1: 24 ore
                         var tomorrow = now.AddDays(1);
-                        var window24hStart = now.AddHours(23); // Cautam intre 23h si 25h de acum
+                        var window24hStart = now.AddHours(23); 
 
                         var appointments24h = await context.Appointments
                             .Include(a => a.Patient).Include(a => a.Doctor)
@@ -56,9 +54,7 @@ namespace AethirMaelWebApplication.Server.Workers
                             }
                         }
 
-                        // ---------------------------------------------------------
-                        // CAZUL 2: Reminder de 2 ORE (Urgent)
-                        // ---------------------------------------------------------
+                        // Reminder 2 ore
                         var twoHoursFromNow = now.AddHours(2);
 
                         var appointments2h = await context.Appointments

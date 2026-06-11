@@ -78,13 +78,11 @@ namespace AethirMaelWebApplication.Server.Services
                 .Where(r => r.AppointmentId.HasValue && doctorAppointmentIds.Contains(r.AppointmentId.Value))
                 .ToListAsync();
 
-            // Rupem legatura setand null 
             foreach (var record in recordsToUnlink)
             {
                 record.AppointmentId = null;
             }
 
-            // Stergem user-ul asociat medicului
             var user = await _context.Users.FirstOrDefaultAsync(u => u.DoctorId == id);
 
             if (user != null)

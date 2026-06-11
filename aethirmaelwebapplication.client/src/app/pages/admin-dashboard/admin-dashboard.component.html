@@ -16,8 +16,17 @@
       </a>
     </div>
 
+    <!-- SEARCH BAR -->
+    <div class="mb-6 flex justify-end">
+      <mat-form-field appearance="outline" class="w-full md:w-1/3 rounded-md">
+        <mat-label>Caută utilizator...</mat-label>
+        <input matInput [(ngModel)]="searchQuery" (keyup)="applyFilter()" placeholder="Nume, email sau rol">
+        <mat-icon matSuffix class="text-gray-400">search</mat-icon>
+      </mat-form-field>
+    </div>
+
     <mat-card class="!rounded-xl shadow-lg overflow-hidden">
-      <table mat-table [dataSource]="users" class="w-full">
+      <table mat-table [dataSource]="filteredUsers" class="w-full">
 
         <!-- ID Column -->
         <ng-container matColumnDef="id">

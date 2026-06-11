@@ -15,7 +15,7 @@ namespace AethirMaelWebApplication.Server.Services
             _context = context;
         }
 
-        // --- 1. Programările Doctorului ---
+        //  Programarile Doctorului 
         public async Task<List<object>> GetDoctorAppointmentsAsync(int userId)
         {
             var user = await _context.Users.Include(u => u.Doctor).FirstOrDefaultAsync(u => u.UserId == userId);
@@ -28,7 +28,6 @@ namespace AethirMaelWebApplication.Server.Services
                 .OrderBy(a => a.AppointmentDate)
                 .Select(a => new
                 {
-                    // Folosim nume explicite pentru a evita confuzia JSON
                     appointmentId = a.AppointmentId,
                     appointmentDate = a.AppointmentDate,
                     patientName = a.Patient.LastName + " " + a.Patient.FirstName,
@@ -41,7 +40,7 @@ namespace AethirMaelWebApplication.Server.Services
             return appointments.Cast<object>().ToList();
         }
 
-        // --- 2. Actualizare Status ---
+        // Actualizare status
         public async Task<bool> UpdateStatusAsync(int appointmentId, string newStatus)
         {
             var appointment = await _context.Appointments.FindAsync(appointmentId);
@@ -54,19 +53,18 @@ namespace AethirMaelWebApplication.Server.Services
 
         public async Task<List<string>> GetBusySlotsAsync(int doctorId, DateTime date)
         {
-            // Căutăm programările pentru doctor in ziua respectiva
+            // Cautam programarile existente
             var busySlots = await _context.Appointments
                 .Where(a => a.DoctorId == doctorId
-                         && a.AppointmentDate.Date == date.Date // Comparăm doar data, ignorăm ora
-                         && a.Status != "Anulată") // Ignorăm programările anulate
+                         && a.AppointmentDate.Date == date.Date 
+                         && a.Status != "Anulată") 
                 .Select(a => a.AppointmentDate)
                 .ToListAsync();
 
-            // Facem formatarea în memorie pentru siguranță
             return busySlots.Select(d => d.ToString("HH:mm", CultureInfo.InvariantCulture)).ToList();
         }
 
-        // --- 3. Creare Programare ---
+
         public async Task<string> CreateAppointmentAsync(CreateAppointmentDto dto, int userId)
         {
             var user = await _context.Users.Include(u => u.Patient).FirstOrDefaultAsync(u => u.UserId == userId);
@@ -107,10 +105,9 @@ namespace AethirMaelWebApplication.Server.Services
             return "Success";
         }
 
-        // --- 4. Programările Mele (Pacient) ---
+
         public async Task<List<object>> GetMyAppointmentsAsync(int userId)
         {
-            // 1. Găsim ID-ul pacientului asociat userului logat
             var patientId = await _context.Users
                 .Where(u => u.UserId == userId)
                 .Select(u => u.PatientId)
@@ -118,14 +115,12 @@ namespace AethirMaelWebApplication.Server.Services
 
             if (patientId == null) return new List<object>();
 
-            // 2. Aducem programările
             var appointments = await _context.Appointments
                 .Include(a => a.Doctor)
                 .Where(a => a.PatientId == patientId)
                 .OrderByDescending(a => a.AppointmentDate)
                 .Select(a => new
                 {
-                    // Nume proprietăți camelCase pentru a fi sigur ca Frontend-ul le vede
                     appointmentId = a.AppointmentId,
                     appointmentDate = a.AppointmentDate,
                     doctorName = "Dr. " + a.Doctor.LastName + " " + a.Doctor.FirstName,

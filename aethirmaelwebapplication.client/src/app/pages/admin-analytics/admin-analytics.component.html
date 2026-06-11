@@ -12,7 +12,7 @@
 
     <div *ngIf="!isLoading && stats" class="animate-fade-in">
 
-      <!-- 1. CARDURI SUMAR -->
+      <!-- CARDURI SUMAR -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
 
         <mat-card class="!rounded-xl p-6 border-l-8 border-blue-500 shadow-md">
@@ -47,7 +47,7 @@
 
       </div>
 
-      <!-- 2. GRAFICE -->
+      <!-- GRAFICE -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
         <!-- Grafic Programari -->
@@ -57,18 +57,18 @@
           </h3>
 
           <div *ngIf="stats.appointmentsPerMonth.length > 0" class="mt-6">
-            <!-- Zona Barelor (Inaltime fixa de 48, continut aliniat jos) -->
+            <!-- Zona Barilor -->
             <div class="h-48 flex items-end justify-between gap-4 px-2 border-b border-gray-200">
               <div *ngFor="let item of stats.appointmentsPerMonth" class="w-full h-full flex flex-col justify-end group cursor-pointer">
 
-                <!-- Bara cu înălțime dinamică calculată procentual -->
+                <!-- Bara calculata procentual -->
                 <div class="w-full bg-green-300 group-hover:bg-green-500 rounded-t-md transition-all duration-500 relative"
                      [style.height]="getBarHeight(item.count, stats.appointmentsPerMonth)">
 
-                  <!-- Tooltip (pluteste absolut deasupra barei) -->
+                  <!-- Tooltip  -->
                   <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-lg pointer-events-none z-10 whitespace-nowrap">
                     {{ item.count }} prog.
-                    <!-- Un mic triunghi indicator in jos -->
+
                     <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
                   </div>
 
@@ -76,7 +76,7 @@
               </div>
             </div>
 
-            <!-- Zona Etichetelor (Complet separata sub grafic) -->
+            <!-- Etichete  -->
             <div class="flex justify-between gap-4 px-2 mt-3">
               <div *ngFor="let item of stats.appointmentsPerMonth" class="w-full text-center text-xs text-gray-500 font-bold uppercase tracking-wider">
                 {{ item.month.split(' ')[0] }}
@@ -84,7 +84,7 @@
             </div>
           </div>
 
-          <!-- Starea gol (Fara date) -->
+          <!-- Starea gol -->
           <div *ngIf="stats.appointmentsPerMonth.length === 0" class="h-48 mt-6 flex items-center justify-center text-gray-400">
             Nu sunt date suficiente în ultimele 6 luni.
           </div>
@@ -97,7 +97,7 @@
           </h3>
 
           <div *ngIf="stats.patientsPerMonth.length > 0" class="mt-6">
-            <!-- Zona Barelor -->
+            <!-- Zona Barilor -->
             <div class="h-48 flex items-end justify-between gap-4 px-2 border-b border-gray-200">
               <div *ngFor="let item of stats.patientsPerMonth" class="w-full h-full flex flex-col justify-end group cursor-pointer">
 
@@ -114,7 +114,7 @@
               </div>
             </div>
 
-            <!-- Zona Etichetelor -->
+            <!-- Etichete -->
             <div class="flex justify-between gap-4 px-2 mt-3">
               <div *ngFor="let item of stats.patientsPerMonth" class="w-full text-center text-xs text-gray-500 font-bold uppercase tracking-wider">
                 {{ item.month.split(' ')[0] }}

@@ -11,7 +11,7 @@
   <!-- Navigare -->
   <nav class="flex items-center gap-6 h-full">
 
-    <!-- Link 1: Acasă -->
+    <!-- Acasa -->
     <a routerLink="/home"
        routerLinkActive="text-white border-b-2 border-mystic-accent"
        class="flex items-center h-full text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">
@@ -24,9 +24,8 @@
        class="flex items-center h-full text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">
       Lista Medici
     </a>
-
-    <!-- ZONA DINAMICĂ DE USER -->
-    <!-- Varianta 1: Vizitator (Nu e logat) -->
+    <!--ZONA DINAMICA USER-->
+    <!-- Vizitator (Nu e logat) -->
     <ng-container *ngIf="(authService.currentUser$ | async) === null">
       <a routerLink="/register" routerLinkActive="text-white border-b-2 border-mystic-accent" class="text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">
         Creaza-ti Cont
@@ -36,13 +35,13 @@
       </a>
     </ng-container>
 
-    <!-- Varianta 2: Utilizator Logat -->
+    <!-- Utilizator Logat -->
     <ng-container *ngIf="authService.currentUser$ | async as user">
 
-      <!-- ICONIȚE DE ACȚIUNE (Vizibile doar pentru rolurile specifice) -->
+      <!-- ICONITE DE ACTIUNE -->
       <div class="flex items-center gap-4 border-l border-mystic-primary pl-6 ml-2 h-8">
 
-        <!-- Link pentru PACIENTI: Programările Mele -->
+        <!-- Link pentru PACIENTI -->
         <a *ngIf="user.role === 'Patient'"
            routerLink="/programarile-mele"
            routerLinkActive="text-mystic-accent"
@@ -60,7 +59,7 @@
           <span class="flex items-center h-full text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">Istoric Medical</span>
         </a>
 
-        <!-- Link pentru DOCTORI: Dashboard -->
+        <!-- Link pentru DOCTORI -->
         <a *ngIf="user.role === 'Doctor'"
            routerLink="/doctor-dashboard"
            routerLinkActive="text-mystic-accent"
@@ -70,7 +69,7 @@
           <span class="flex items-center h-full text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">Dashboard</span>
         </a>
 
-        <!-- Link pentru ADMIN: Panou Admin -->
+        <!-- Link pentru ADMIN -->
         <a *ngIf="user.role === 'Admin'"
            routerLink="/add-doctor"
            routerLinkActive="text-mystic-accent"
@@ -80,7 +79,6 @@
           <span class="flex items-center h-full text-mystic-light hover:text-white transition-colors text-sm font-medium no-underline">Add Doctors</span>
         </a>
 
-        <!-- Link pentru ADMIN -->
         <a *ngIf="user.role === 'Admin'"
            routerLink="/admin"
            routerLinkActive="text-mystic-accent"
@@ -111,6 +109,38 @@
 <main class="bg-mystic-pale min-h-[calc(100vh-64px)]">
   <router-outlet></router-outlet>
 </main>
+
+<footer class="bg-mystic-dark text-mystic-pale py-8 border-t border-mystic-primary shadow-inner mt-auto">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+
+    <!-- Informatii -->
+    <div class="text-center md:text-left">
+      <p class="font-bold text-lg mb-2 flex items-center justify-center md:justify-start gap-2">
+        <span class="material-icons text-mystic-accent">local_hospital</span>
+        AethirMael Medical Center
+      </p>
+      <p class="text-sm text-mystic-light flex items-center justify-center md:justify-start gap-2 mt-2">
+        <span class="material-icons text-[18px]">location_on</span>
+        Str. Laurului Nr. 10, Craiova, România
+      </p>
+    </div>
+
+    <!-- Contact -->
+    <div class="text-center md:text-right text-sm text-mystic-light space-y-2">
+      <p class="flex items-center justify-center md:justify-end gap-2">
+        <span class="material-icons text-[18px]">phone</span> +40 21 123 4567
+      </p>
+      <p class="flex items-center justify-center md:justify-end gap-2">
+        <span class="material-icons text-[18px]">email</span> contact&#64;aethirmael.ro
+      </p>
+    </div>
+
+  </div>
+
+  <div class="text-center text-xs text-mystic-light/40 mt-8 pt-4 border-t border-mystic-primary/30">
+    &copy; 2026 AethirMael. Toate drepturile rezervate. Platformă licențiată.
+  </div>
+</footer>
 
 <app-chatbot></app-chatbot>
 

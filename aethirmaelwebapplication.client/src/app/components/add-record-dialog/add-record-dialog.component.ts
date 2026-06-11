@@ -45,7 +45,7 @@ export class AddRecordDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // Verificăm dacă suntem în mod de editare
+    //Verificam Edit mode
     if (this.data.existingRecord) {
       this.isEditMode = true;
       const rec = this.data.existingRecord;
@@ -68,7 +68,7 @@ export class AddRecordDialogComponent implements OnInit {
     this.isLoading = true;
 
     if (this.isEditMode && this.data.existingRecord) {
-      // --- LOGICA DE UPDATE ---
+      // Logica de update
       const updatePayload: UpdateMedicalRecordDto = {
         medicalRecordId: this.data.existingRecord.medicalRecordId,
         ...this.recordData
@@ -87,7 +87,7 @@ export class AddRecordDialogComponent implements OnInit {
       });
 
     } else {
-      // --- LOGICA DE CREATE ---
+      //Logica de creare
       const createPayload = {
         patientId: this.data.patientId!,
         appointmentId: this.data.appointmentId,

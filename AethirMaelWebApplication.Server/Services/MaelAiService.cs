@@ -24,21 +24,21 @@ namespace AethirMaelWebApplication.Server.Services
         {
             try
             {
-                // 1. Extragem ID-ul din Token
+                // Extragem ID-ul din Token
                 var claim = currentUser.FindFirst(ClaimTypes.NameIdentifier) ?? currentUser.FindFirst("id");
                 if (claim == null)
                     return "🤖 Eroare internă: Nu am putut găsi ID-ul tău în token-ul de securitate.";
 
                 int userId = int.Parse(claim.Value);
 
-                // 2. Validare Cheie API (Revenim la Groq)
+                // Validare Cheie API 
                 var apiKey = _configuration["Groq:ApiKey"];
                 if (string.IsNullOrWhiteSpace(apiKey) || apiKey.Contains("LIPESTE_AICI") || apiKey == "string")
                 {
                     return "🤖 Oops! Conexiunea mea cu serverele Groq este oprită. Verifică appsettings.json.";
                 }
 
-                // 3. STATISTICI GLOBALE CLINICĂ
+                // STATISTICI GLOBALE CLINICĂ
                 int totalPatients = await _context.Patients.CountAsync();
                 int totalAppointments = await _context.Appointments.CountAsync();
                 int totalRecords = await _context.MedicalRecords.CountAsync();
@@ -50,7 +50,7 @@ namespace AethirMaelWebApplication.Server.Services
                     .ToListAsync();
                 string doctorsStr = string.Join(", ", doctorsList);
 
-                // 4. IDENTIFICARE UTILIZATOR ȘI EXTRAGERE DATE RELEVANTE
+                // IDENTIFICARE UTILIZATOR ȘI EXTRAGERE DATE RELEVANTE
                 var user = await _context.Users
                     .Include(u => u.Patient)
                     .Include(u => u.Doctor)
@@ -89,15 +89,15 @@ namespace AethirMaelWebApplication.Server.Services
                             .Include(r => r.Patient)
                             .Where(r => r.DoctorId == user.Doctor.DoctorId)
                             .OrderByDescending(r => r.DateCreated)
-                            .Take(30)
                             .Select(r => $"Pacient: {r.Patient.LastName} {r.Patient.FirstName} | Data: {r.DateCreated:dd/MM/yyyy} | Diagnostic: {r.Diagnosis} | Simptome: {r.Symptoms} | Tratament: {r.Treatment}")
                             .ToListAsync();
 
                         if (doctorPatients.Any())
                             dataContext = "Ai acces la fișele pacienților tăi:\n" + string.Join("\n", doctorPatients);
                         else
-                            dataContext = "Nu ai completat încă nicio fișă medicală pentru vreun pacient.";
+                            dataContext = "Nu ai completat încă nicio fișă medicală.";
                     }
+
                     // ADMINISTRATOR
                     else if (!string.IsNullOrEmpty(user.Role) && user.Role.ToLower().Contains("admin"))
                     {
@@ -108,18 +108,17 @@ namespace AethirMaelWebApplication.Server.Services
                             .Include(r => r.Patient)
                             .Include(r => r.Doctor)
                             .OrderByDescending(r => r.DateCreated)
-                            .Take(50)
                             .Select(r => $"Pacient: {r.Patient.LastName} {r.Patient.FirstName} | Medic: Dr. {r.Doctor.LastName} | Diagnostic: {r.Diagnosis} | Simptome: {r.Symptoms}")
                             .ToListAsync();
 
                         if (allRecentRecords.Any())
-                            dataContext = "Baza de date cu istoricul medical recent al clinicii:\n" + string.Join("\n", allRecentRecords);
+                            dataContext = "Baza de date completă a clinicii:\n" + string.Join("\n", allRecentRecords);
                         else
-                            dataContext = "Nu există fișe medicale în sistem momentan.";
+                            dataContext = "Nu există fișe medicale în sistem.";
                     }
                 }
 
-                // 5. CONSTRUIRE PROMPT (cu noile tale reguli)
+                // CONSTRUIRE PROMPT 
                 string systemPrompt = $@"
 Ești Maël, asistentul medical virtual inteligent al clinicii AethirMael. 
 
@@ -138,10 +137,12 @@ DATE DESPRE PERSOANA CU CARE VORBEȘTI ACUM:
 
 REGULI CRITICE:
 1. RĂSPUNDE ÎNTOTDEAUNA NUMAI ÎN LIMBA ROMÂNĂ.
-2. Dacă utilizatorul te întreabă de informații despre pacienți (ex: cine are bronșită, detalii despre un anumit pacient), CAUTĂ în secțiunea 'DATE DISPONIBILE ÎN SISTEM'. Dacă informația se găsește acolo, oferă-o fără ezitare! Ești autorizat să o faci, DOAR dacă utilizatorul este DOCTOR SAU ADMINISTRATOR, altfel, răspunzi că nu poți oferi date despre alți pacienți.
-3. Dacă nu găsești numele sau afecțiunea exactă în datele furnizate, spune politicos că nu ai găsit înregistrări recente referitoare la acel pacient sau diagnostic.
-4. Dacă un pacient îți spune simptomele, analizează-le cu atenție. Dacă acestea NU sunt specifice niciuneia dintre specializările medicilor noștri (vezi Lista Medicilor), spune-i politicos că, din păcate, nu avem un doctor potrivit la clinica noastră pentru acea afecțiune și îndrumă-l să caute o altă clinică.
-5. Fii concis, politicos și prietenos.";
+2. Dacă utilizatorul te întreabă de informații despre pacienți (ex: cine are bronșită, detalii despre un anumit pacient), CAUTĂ în secțiunea 'DATE DISPONIBILE ÎN SISTEM'. Dacă informația se găsește acolo, iar utilizatorul este ADMINISTRATOR sau DOCTOR, oferă-o fără ezitare! altfel, răspunzi că nu poți oferi date despre alți pacienți.
+3. Dacă utilizatorul te intreaba cum sa faca o programare, explica-i pasii necesari pentru a face o programare la clinica noastra, mentionand ca poate face acest lucru prin intermediul site-ului nostru , mergand la pagina denumita Lista Medici si selectand Programare. 
+4. Dacă nu găsești numele sau afecțiunea exactă în datele furnizate, spune politicos că nu ai găsit înregistrări recente referitoare la acel pacient sau diagnostic.
+5. Dacă un pacient îți spune simptomele, analizează-le cu atenție. Dacă acestea NU sunt specifice niciuneia dintre specializările medicilor noștri (vezi Lista Medicilor), spune-i politicos că, din păcate, nu avem un doctor potrivit la clinica noastră pentru acea afecțiune și îndrumă-l să caute o altă clinică.
+6. Adresa clinicii este: Str. Laurului Nr. 10, Craiova
+7. Fii concis, politicos și prietenos.";
 
                 // Apelare Groq API
                 var model = _configuration["Groq:Model"] ?? "llama-3.1-8b-instant";

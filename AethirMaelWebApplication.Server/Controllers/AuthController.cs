@@ -31,12 +31,11 @@ namespace AethirMaelWebApplication.Server.Controllers
         [HttpPost("register")]
         public async Task<ActionResult> Register(RegisterDto registerDto)
         {
-            // Acum 'result' contine mesajul de eroare sau "Success"
             var result = await _authService.RegisterAsync(registerDto);
 
             if (result = false)
             {
-                // Returnam 400 Bad Request cu mesajul specific (ex: CNP duplicat)
+                // Returnam 400 Bad Request cu mesajul specific (
                 return BadRequest(result);
             }
 

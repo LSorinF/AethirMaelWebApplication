@@ -1,151 +1,226 @@
 <div class="min-h-screen bg-mystic-pale p-8">
-  <div class="max-w-5xl mx-auto">
-    <h2 class="text-3xl font-bold text-mystic-dark mb-8 flex items-center">
-      <mat-icon class="mr-3 scale-150 text-mystic-accent">dashboard</mat-icon>
-      Panou de Control Medic
-    </h2>
+  <div class="max-w-6xl mx-auto">
 
-    <div *ngIf="isLoading" class="text-center py-10">
-      <mat-spinner diameter="40" class="mx-auto"></mat-spinner>
-      <p class="text-gray-500 mt-4">Se preiau programările...</p>
+    <!-- ANTET PANOU -->
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-3xl font-bold text-mystic-dark flex items-center">
+        <mat-icon class="mr-3 scale-150 text-mystic-accent font-bold">medical_services</mat-icon>
+        Panou de Control Medic
+      </h2>
+
+      <a mat-raised-button class="!bg-mystic-primary !text-white" routerLink="/add-doctor">
+        <mat-icon>person_add</mat-icon> Adaugă Medic Nou
+      </a>
     </div>
 
-    <div *ngIf="!isLoading">
+    <mat-card class="!rounded-2xl shadow-xl overflow-hidden p-6 bg-white border border-gray-100">
 
-      <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" animationDuration="0ms">
+      <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" class="h-full">
 
-        <!-- DE PROCESAT & VIITOARE -->
+        <!--  VIITOARE & CERERI  -->
         <mat-tab>
           <ng-template mat-tab-label>
-            <div class="flex items-center gap-2">
-              <mat-icon class="text-mystic-accent">schedule</mat-icon>
-              <span>Viitoare & Cereri</span>
-              <!-- Badge cu numarul de programari -->
-              <span *ngIf="upcomingAppointments.length > 0" class="bg-mystic-accent text-white text-xs px-2 py-0.5 rounded-full">
-                {{ upcomingAppointments.length }}
-              </span>
-            </div>
+            <mat-icon class="mr-2">pending_actions</mat-icon> Viitoare & Cereri
           </ng-template>
 
-          <div class="py-6">
-            <ng-container *ngIf="upcomingAppointments.length > 0; else noUpcoming">
-              <div class="grid gap-6">
-                <ng-container *ngFor="let app of upcomingAppointments">
-                  <!-- Inseram cardul -->
-                  <ng-container *ngTemplateOutlet="appointmentCard; context: { $implicit: app }"></ng-container>
-                </ng-container>
+          <div class="py-6 space-y-4">
+            <div *ngIf="isLoading" class="flex justify-center py-10">
+              <mat-spinner diameter="40"></mat-spinner>
+            </div>
+
+            <div *ngIf="!isLoading && upcomingAppointments.length === 0" class="text-center text-gray-400 py-10">
+              <mat-icon class="text-5xl mb-2">calendar_today</mat-icon>
+              <p>Nu aveți nicio programare confirmată sau solicitare activă.</p>
+            </div>
+
+            <div *ngFor="let app of upcomingAppointments" class="p-5 border border-gray-100 rounded-xl bg-white shadow-sm flex flex-col md:flex-row justify-between items-center gap-4 hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-4">
+                <div class="bg-mystic-pale p-3 rounded-lg text-center min-w-[70px]">
+                  <p class="text-xs font-bold text-gray-500 uppercase m-0">{{ app.appointmentDate | date:'MMM' }}</p>
+                  <p class="text-xl font-bold text-mystic-primary m-0">{{ app.appointmentDate | date:'dd' }}</p>
+                </div>
+                <div>
+                  <h4 class="text-lg font-bold text-gray-800 m-0">{{ app.patientName }}</h4>
+                  <p class="text-sm text-gray-500 m-0">Ora: {{ app.appointmentDate | date:'HH:mm' }} | Status: <b>{{ app.status }}</b></p>
+                  <p class="text-xs text-gray-400 italic mt-1" *ngIf="app.patientNotes">"{{ app.patientNotes }}"</p>
+                </div>
               </div>
-            </ng-container>
-            <ng-template #noUpcoming>
-              <div class="bg-white p-10 rounded-xl text-center border border-gray-200">
-                <mat-icon class="text-1xl text-green-300 mb-4">check_circle</mat-icon>
-                <p class="text-xl text-gray-600">Nu ai programări viitoare sau cereri în așteptare.</p>
+
+              <!-- Actiuni rapide -->
+              <div class="flex gap-2">
+                <button *ngIf="app.status === 'Solicitata'" mat-raised-button class="!bg-mystic-accent !text-white" (click)="acceptAppointment(app)">
+                  Acceptă
+                </button>
+                <button *ngIf="app.status === 'Solicitata'" mat-button color="warn" (click)="cancelAppointment(app)">
+                  Respinge
+                </button>
+                <button *ngIf="app.status === 'Confirmată'" mat-raised-button class="!bg-mystic-primary !text-white" (click)="openAddRecord(app)">
+                  <mat-icon class="text-sm">post_add</mat-icon> Completează Fișă
+                </button>
+                <button mat-icon-button class="text-gray-400 hover:text-mystic-primary" (click)="viewHistory(app)" matTooltip="Vezi Istoric Complet">
+                  <mat-icon>history</mat-icon>
+                </button>
               </div>
-            </ng-template>
+            </div>
           </div>
         </mat-tab>
 
-        <!-- ISTORIC -->
-        <mat-tab label="Istoric">
-          <div class="py-6">
-            <ng-container *ngIf="pastAppointments.length > 0; else noPast">
-              <div class="grid gap-6 opacity-80 grayscale-[0.3]">
-                <ng-container *ngFor="let app of pastAppointments">
-                  <ng-container *ngTemplateOutlet="appointmentCard; context: { $implicit: app }"></ng-container>
-                </ng-container>
+        <!-- ISTORIC CONSULTATII -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="mr-2">task_alt</mat-icon> Istoric Consultații
+          </ng-template>
+
+          <div class="py-6 space-y-4">
+            <div *ngIf="isLoading" class="flex justify-center py-10">
+              <mat-spinner diameter="40"></mat-spinner>
+            </div>
+
+            <div *ngIf="!isLoading && pastAppointments.length === 0" class="text-center text-gray-400 py-10">
+              <p>Nicio consultație finalizată în istoric.</p>
+            </div>
+
+            <div *ngFor="let app of pastAppointments" class="p-5 border border-gray-100 rounded-xl bg-gray-50 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4 opacity-85">
+              <div class="flex items-center gap-4">
+                <div class="bg-gray-200 p-3 rounded-lg text-center min-w-[70px]">
+                  <p class="text-xs font-bold text-gray-500 uppercase m-0">{{ app.appointmentDate | date:'MMM' }}</p>
+                  <p class="text-xl font-bold text-gray-600 m-0">{{ app.appointmentDate | date:'dd' }}</p>
+                </div>
+                <div>
+                  <h4 class="text-lg font-bold text-gray-700 m-0">{{ app.patientName }}</h4>
+                  <p class="text-sm text-gray-500 m-0">Finalizată la data: {{ app.appointmentDate | date:'dd/MM/yyyy HH:mm' }}</p>
+                </div>
               </div>
-            </ng-container>
-            <ng-template #noPast>
-              <p class="text-gray-500 italic p-4">Nu există istoric.</p>
-            </ng-template>
+
+              <div class="flex gap-2">
+                <button mat-icon-button class="text-gray-400 hover:text-mystic-primary" (click)="viewHistory(app)" matTooltip="Vezi Fișa Medicală Salvaă">
+                  <mat-icon>history</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!--  RAPOARTE & AI  -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="mr-2 text-mystic-accent">analytics</mat-icon> Rapoarte & AI
+          </ng-template>
+
+          <div class="flex flex-col md:flex-row h-[550px] mt-6 border border-gray-100 rounded-2xl overflow-hidden bg-gray-50">
+
+            <!-- Selector Pacient și Statistici Live -->
+            <div class="w-full md:w-1/3 p-6 bg-white border-r border-gray-100 flex flex-col justify-between overflow-y-auto">
+              <div>
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Alege Pacientul</h3>
+
+                <!-- Dropdown Selectare Pacient Unic -->
+                <mat-form-field appearance="outline" class="w-full mb-6">
+                  <mat-label>Filtrează Pacient</mat-label>
+                  <mat-select [(ngModel)]="selectedPatientId" (selectionChange)="onPatientChange($event.value)">
+                    <mat-option *ngFor="let p of uniquePatients" [value]="p.id">
+                      {{ p.name }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <!-- Statistici Live din Baza de Date -->
+                <div *ngIf="selectedPatientId" class="space-y-4 animate-fade-in">
+                  <h4 class="text-xs font-bold text-mystic-accent uppercase tracking-wider">Date Statistice Live</h4>
+
+                  <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 shadow-sm">
+                    <p class="text-[10px] text-blue-600 font-bold uppercase m-0 mb-1">Total Consulturi</p>
+                    <p class="text-3xl font-bold text-blue-900 m-0">{{ totalVisits }}</p>
+                  </div>
+
+                  <div class="bg-red-50 p-4 rounded-xl border border-red-100 shadow-sm">
+                    <p class="text-[10px] text-red-600 font-bold uppercase m-0 mb-1">Ultimul Diagnostic</p>
+                    <p class="text-sm font-bold text-red-900 m-0 truncate" [title]="latestDiagnosis">{{ latestDiagnosis }}</p>
+                  </div>
+
+                  <div class="bg-green-50 p-4 rounded-xl border border-green-100 shadow-sm">
+                    <p class="text-[10px] text-green-600 font-bold uppercase m-0 mb-1">Fișă deschisă la</p>
+                    <p class="text-sm font-bold text-green-900 m-0">
+                      {{ firstVisitDate ? (firstVisitDate | date:'dd MMM yyyy') : 'Fără înregistrări' }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Mesaj cand nu e selectat niciun pacient -->
+                <div *ngIf="!selectedPatientId" class="text-center py-16 text-gray-400">
+                  <mat-icon class="text-5xl mb-2 text-gray-300">person_search</mat-icon>
+                  <p class="text-sm">Selectează un pacient din listă pentru a-i încărca fișele și a activa asistentul AI.</p>
+                </div>
+              </div>
+
+              <div class="text-[11px] text-gray-400 leading-relaxed border-t border-gray-100 pt-4 mt-6 flex items-center gap-2">
+                <mat-icon class="text-sm text-mystic-accent">security</mat-icon>
+                <span>Analiza AI folosește date securizate, izolate la nivel de medic-pacient.</span>
+              </div>
+            </div>
+
+            <!-- Chat Maël -->
+            <div class="w-full md:w-2/3 flex flex-col relative bg-gray-50 h-full">
+
+              <!-- Fereastra activa Chat -->
+              <ng-container *ngIf="selectedPatientId; else chatPlaceholder">
+
+                <!-- Zona Mesaje -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-4" #scrollMe>
+                  <div *ngFor="let msg of messages" [ngClass]="{'flex justify-end': msg.isUser, 'flex justify-start': !msg.isUser}">
+                    <div [ngClass]="msg.isUser ? 'bg-mystic-primary text-white rounded-tr-sm' : 'bg-white text-gray-800 rounded-tl-sm border border-gray-200'"
+                         class="p-4 rounded-2xl shadow-sm max-w-[85%] text-sm leading-relaxed">
+                      <p class="m-0 whitespace-pre-wrap">{{ msg.text }}</p>
+                      <span class="text-[9px] opacity-70 mt-2 block text-right">
+                        {{ msg.time | date:'HH:mm' }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Loader AI -->
+                  <div *ngIf="isAiLoading" class="flex justify-start">
+                    <div class="bg-white p-4 rounded-2xl rounded-tl-sm border border-gray-200 shadow-sm flex items-center gap-2">
+                      <mat-spinner diameter="15"></mat-spinner>
+                      <span class="text-xs text-gray-500 italic">Maël citește istoricul pacientului din baza de date...</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Input Mesaj -->
+                <div class="p-4 bg-white border-t border-gray-100 flex gap-2">
+                  <input type="text"
+                         class="flex-1 bg-gray-100 rounded-full px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-mystic-accent transition-all"
+                         placeholder="Ex: Fă-mi o sinteză a ultimelor simptome raportate..."
+                         [(ngModel)]="currentInput"
+                         (keyup.enter)="sendMessage()">
+
+                  <button mat-mini-fab class="!bg-mystic-accent !text-white !shadow-none hover:!bg-mystic-primary transition-colors"
+                          (click)="sendMessage()"
+                          [disabled]="!currentInput.trim() || isAiLoading">
+                    <mat-icon>send</mat-icon>
+                  </button>
+                </div>
+              </ng-container>
+
+              <!-- Placeholder Chat când nu e selectat pacientul -->
+              <ng-template #chatPlaceholder>
+                <div class="flex-1 flex flex-col items-center justify-center text-gray-400 p-8">
+                  <mat-icon class="text-6xl mb-3 text-gray-200">smart_toy</mat-icon>
+                  <h3 class="font-bold text-gray-600 mb-1">Maël AI Copilot</h3>
+                  <p class="text-sm text-center max-w-sm">
+                    După selectarea pacientului, asistentul Maël va fi pregătit să ofere răspunsuri la întrebări clinice pe baza dosarului medical.
+                  </p>
+                </div>
+              </ng-template>
+
+            </div>
+
           </div>
         </mat-tab>
 
       </mat-tab-group>
 
-    </div>
+    </mat-card>
+
   </div>
 </div>
-
-<!-- CARD -->
-<ng-template #appointmentCard let-app>
-  <mat-card class="!rounded-xl border-l-8 transition-all shadow-sm hover:shadow-md"
-            [class.border-yellow-400]="app.status === 'Solicitata'"
-            [class.border-green-500]="app.status === 'Confirmată'"
-            [class.border-red-500]="app.status === 'Anulată'">
-
-    <div class="p-6 flex flex-col md:flex-row justify-between items-center gap-6">
-
-      <!-- Info Data si Pacient -->
-      <div class="flex items-start gap-4 flex-1">
-        <!-- Data Box -->
-        <div class="bg-mystic-pale p-3 rounded-lg text-center min-w-[70px]">
-          <div class="text-xs font-bold text-gray-500 uppercase">{{ app.appointmentDate | date:'MMM' }}</div>
-          <div class="text-xl font-bold text-mystic-primary">{{ app.appointmentDate | date:'dd' }}</div>
-          <div class="text-xs font-bold text-gray-800 mt-1">{{ app.appointmentDate | date:'HH:mm' }}</div>
-        </div>
-
-        <!-- Text Info -->
-        <div>
-          <h3 class="text-lg font-bold text-mystic-dark flex items-center">
-            {{ app.patientName }}
-            <span *ngIf="app.status === 'Solicitata'" class="ml-3 text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full border border-yellow-200">
-              Necesită Aprobare
-            </span>
-          </h3>
-
-          <div class="mt-2 text-sm text-gray-600 bg-gray-50 p-3 rounded border border-gray-100 italic" *ngIf="app.patientNotes">
-            "{{ app.patientNotes }}"
-          </div>
-          <div class="mt-2 text-sm text-gray-400 italic" *ngIf="!app.patientNotes">
-            Fără notițe de la pacient.
-          </div>
-        </div>
-      </div>
-
-      <!-- Actiuni / Status -->
-      <div class="flex items-center gap-3">
-        <!-- Butoane Solicitare -->
-        <div *ngIf="app.status === 'Solicitata'" class="flex flex-col sm:flex-row gap-2">
-          <button mat-flat-button class="!bg-green-600 !text-white" (click)="changeStatus(app.appointmentId, 'Confirmată')">
-            <mat-icon>check</mat-icon> Acceptă
-          </button>
-          <button mat-stroked-button color="warn" (click)="changeStatus(app.appointmentId, 'Anulată')">
-            <mat-icon>close</mat-icon> Respinge
-          </button>
-        </div>
-
-        <!-- ZONA DE ACȚIUNE CONFIRMATĂ/FINALIZATĂ -->
-        <div *ngIf="app.status === 'Confirmată' || app.status === 'Finalizată'" class="flex gap-2">
-
-          <!-- Buton Completare  -->
-          <button *ngIf="app.status === 'Confirmată'"
-                  mat-stroked-button
-                  class="!text-mystic-primary !border-mystic-primary"
-                  (click)="openAddRecord(app)">
-            <mat-icon>post_add</mat-icon> Completează Fișă
-          </button>
-
-          <!--  Vezi Istoric  -->
-          <button mat-icon-button
-                  class="!text-gray-500 hover:!text-mystic-primary"
-                  matTooltip="Vezi Istoric Pacient"
-                  (click)="viewHistory(app)">
-            <mat-icon>history</mat-icon>
-          </button>
-        </div>
-
-        <!-- Status Chips -->
-        <mat-chip-set *ngIf="app.status !== 'Solicitata'">
-          <mat-chip [class.bg-green-100]="app.status === 'Confirmată'"
-                    [class.bg-blue-100]="app.status === 'Finalizată'"
-                    [class.bg-red-100]="app.status === 'Anulată'"
-                    class="font-bold">
-            {{ app.status }}
-          </mat-chip>
-        </mat-chip-set>
-
-      </div>
-    </div>
-  </mat-card>
-</ng-template>

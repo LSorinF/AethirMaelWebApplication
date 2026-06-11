@@ -18,7 +18,7 @@ namespace AethirMaelWebApplication.Server.Controllers
             _service = service;
         }
 
-        // 1. POST: Creare
+        // POST: Creare
         [HttpPost]
         [Authorize(Roles = "Doctor")]
         public async Task<ActionResult> Create(CreateMedicalRecordDto dto)
@@ -30,7 +30,7 @@ namespace AethirMaelWebApplication.Server.Controllers
             return Ok(new { message = "Fișa medicală a fost salvată." });
         }
 
-        // 2. GET: Istoricul Meu (Pacient)
+        // GET: Istoricul Meu 
         [HttpGet("my-history")]
         [Authorize(Roles = "Patient")]
         public async Task<ActionResult<List<object>>> GetMyHistory()
@@ -39,15 +39,15 @@ namespace AethirMaelWebApplication.Server.Controllers
             return Ok(await _service.GetPatientHistoryAsync(userId));
         }
 
-        // 3. GET: Istoric Pacient Specific (Doctor)
-        [HttpGet("patient/{paientId}")]
+        // GET: Istoric Pacient Specific 
+        [HttpGet("patient/{patientId}")]
         [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<List<object>>> GetPatientHistory(int patientId)
         {
             return Ok(await _service.GetHistoryByPatientIdAsync(patientId));
         }
 
-        // 4. PUT: Actualizare
+        // PUT: Actualizare
         [HttpPut]
         [Authorize(Roles = "Doctor")]
         public async Task<ActionResult> Update([FromBody] UpdateMedicalRecordDto dto)
@@ -63,7 +63,7 @@ namespace AethirMaelWebApplication.Server.Controllers
             return Ok(new { message = "Fișa medicală a fost actualizată." });
         }
 
-        // 5. DELETE: Ștergere (Aici era problema, lipsea!)
+        // DELETE: Stergere 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Doctor")]
         public async Task<ActionResult> Delete(int id)

@@ -7,7 +7,6 @@ namespace AethirMaelWebApplication.Server.Data
 {
     public static class SeedData
     {
-        // Metoda simpla pentru a genera un hash pentru parola (pentru useri)
         private static string HashPassword(string password)
         {
             using (var sha256 = SHA256.Create())
@@ -23,10 +22,8 @@ namespace AethirMaelWebApplication.Server.Data
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                // Asiguram ca baza de date este creata si migrarile aplicate
                 await context.Database.MigrateAsync();
 
-                // SPECIALIZARI
                 if (!await context.Specializations.AnyAsync())
                 {
                     var specializations = new List<Specialization>
@@ -44,7 +41,6 @@ namespace AethirMaelWebApplication.Server.Data
                 //DOCTORI & ADMIN
                 if (!await context.Doctors.AnyAsync())
                 {
-                    // Preluam ID-urile specializarilor deja salvate
                     var cardiology = await context.Specializations.FirstOrDefaultAsync(s => s.Name == "Cardiology");
                     var neurology = await context.Specializations.FirstOrDefaultAsync(s => s.Name == "Neurology");
 
@@ -70,15 +66,12 @@ namespace AethirMaelWebApplication.Server.Data
                     await context.Doctors.AddRangeAsync(doctors);
                     await context.SaveChangesAsync();
 
-                    // Adaugare utilizatori de test (Admin si Doctori)
                     var adminHash = HashPassword("adminpass");
                     var doctor1 = doctors.FirstOrDefault(d => d.Email == "johndoe@clinic.com");
 
                     var users = new List<User>
                     {
-                        // Admin-ul nu e legat de niciun doctor/Patient
                         new User { Email = "admin@hospital.com", PasswordHash = adminHash, Role = "Admin" }, 
-                        // Doctorul este legat de un DoctorId
                         new User { Email = doctor1!.Email, PasswordHash = HashPassword("doctorpass"), Role = "Doctor", DoctorId = doctor1.DoctorId }
                     };
                     await context.Users.AddRangeAsync(users);
@@ -86,7 +79,6 @@ namespace AethirMaelWebApplication.Server.Data
                 }
 
 
-                // Patient DE TEST
                 if (!await context.Patients.AnyAsync())
                 {
                     var Patient = new Patient
@@ -101,7 +93,6 @@ namespace AethirMaelWebApplication.Server.Data
                     await context.Patients.AddAsync(Patient);
                     await context.SaveChangesAsync();
 
-                    // Adaugare utilizator pentru Patient
                     var patientUser = new User
                     {
                         Email = Patient.Email,

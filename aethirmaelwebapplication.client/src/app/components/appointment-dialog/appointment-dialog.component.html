@@ -12,7 +12,6 @@
   <mat-form-field appearance="outline" class="w-full mt-2">
     <mat-label>Data Programării</mat-label>
 
-    <!-- Am adaugat (dateChange) pentru a declansa verificarea -->
     <input matInput [matDatepicker]="picker"
            [matDatepickerFilter]="weekendFilter"
            [min]="minDate"
@@ -39,7 +38,7 @@
 
         <span>{{ hour }}</span>
 
-        <!-- Text mic 'Ocupat' daca e cazul -->
+        <!-- 'Ocupat' -->
         <span *ngIf="isBusy(hour)" class="text-xs text-red-500 font-bold ml-2">
           (OCUPAT)
         </span>
@@ -47,12 +46,11 @@
       </mat-option>
     </mat-select>
 
-    <!-- Spinner mic in dreapta daca incarca -->
     <mat-icon matSuffix *ngIf="checkingAvailability" class="animate-spin text-mystic-accent">sync</mat-icon>
 
   </mat-form-field>
 
-  <!-- NOTIȚE -->
+  <!-- NOTITE -->
   <mat-form-field appearance="outline" class="w-full">
     <mat-label>Simptome / Notițe (Opțional)</mat-label>
     <textarea matInput [(ngModel)]="notes" rows="3"></textarea>

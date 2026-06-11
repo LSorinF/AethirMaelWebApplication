@@ -13,7 +13,7 @@ namespace AethirMaelWebApplication.Server.Services
     public class AuthService
     {
         private readonly ApplicationDbContext _context;
-        private readonly IConfiguration _configuration; // Avem nevoie de config pentru a citi cheia
+        private readonly IConfiguration _configuration; // Folosim config pentru a citi cheia
 
 
         public AuthService(ApplicationDbContext context, IConfiguration configuration)
@@ -34,7 +34,6 @@ namespace AethirMaelWebApplication.Server.Services
             var inputHash = HashPassword(loginDto.Password);
             if (user.PasswordHash != inputHash) return null;
 
-            // GENERARE TOKEN REAL
             string token = CreateToken(user);
 
             return new AuthResponseDto
@@ -47,7 +46,6 @@ namespace AethirMaelWebApplication.Server.Services
 
         public async Task<bool> RegisterAsync(RegisterDto registerDto)
         {
-            //Verifica daca emailul exista deja
             if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
                 return false;
 
@@ -101,7 +99,7 @@ namespace AethirMaelWebApplication.Server.Services
             //Cream token-ul
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(1), // Token valabil 1 zi
+                expires: DateTime.Now.AddDays(1),
                 signingCredentials: creds,
                 issuer: _configuration.GetSection("JwtSettings:Issuer").Value,
                 audience: _configuration.GetSection("JwtSettings:Audience").Value

@@ -9,6 +9,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
+import { FormsModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -16,12 +19,21 @@ import { MatCardModule } from '@angular/material/card';
   imports: [
     CommonModule,
     RouterModule, 
-    MatTableModule, MatButtonModule, MatIconModule, MatChipsModule, MatCardModule
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatChipsModule,
+    MatCardModule,
+    FormsModule,
+    MatInputModule,
+    MatFormFieldModule
   ],
   templateUrl: './admin-dashboard.component.html'
 })
 export class AdminDashboardComponent implements OnInit {
   users: any[] = [];
+  filteredUsers: any[] = []; 
+  searchQuery: string = '';
   displayedColumns: string[] = ['id', 'name', 'email', 'role', 'actions'];
 
   constructor(
@@ -34,7 +46,19 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   loadUsers() {
-    this.adminService.getAllUsers().subscribe(data => this.users = data);
+    this.adminService.getAllUsers().subscribe(data => {
+      this.users = data;
+      this.applyFilter(); 
+    });
+  }
+
+  applyFilter() {
+    const q = this.searchQuery.toLowerCase();
+    this.filteredUsers = this.users.filter(u =>
+      u.fullName?.toLowerCase().includes(q) ||
+      u.email?.toLowerCase().includes(q) ||
+      u.role?.toLowerCase().includes(q)
+    );
   }
 
   deleteUser(user: any) {

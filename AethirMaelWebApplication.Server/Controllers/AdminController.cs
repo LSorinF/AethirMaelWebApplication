@@ -7,7 +7,7 @@ namespace AethirMaelWebApplication.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")] // SECURITATE MAXIMĂ: Doar Adminii au acces
+    [Authorize(Roles = "Admin")] 
     public class AdminController : ControllerBase
     {
         private readonly AdminService _adminService;

@@ -37,10 +37,10 @@
           <!-- CONTINUT DETALIAT -->
           <div class="mt-4 flex flex-col gap-4">
 
-            <!-- ZONA PE CARE O CAPTURĂM PENTRU PDF -->
+            <!-- Zona pentru PDF -->
             <div [id]="'pdf-record-' + rec.medicalRecordId" class="p-8 bg-white rounded border border-gray-200 shadow-sm relative">
 
-              <!-- ANTET PDF (Design pentru Fișă) -->
+              <!-- Antet PDF  -->
               <div class="border-b-2 border-mystic-primary pb-4 mb-6 flex justify-between items-center">
                 <div>
                   <h2 class="text-2xl font-bold text-mystic-dark m-0">AethirMael Clinic</h2>
@@ -53,7 +53,7 @@
                 </div>
               </div>
 
-              <!-- CORP FIȘĂ -->
+              <!-- Corp Fisa -->
               <div class="space-y-4 text-sm text-gray-800">
                 <div>
                   <strong class="text-mystic-dark block mb-1 uppercase text-xs tracking-wider border-b border-gray-100 pb-1">Diagnostic</strong>
@@ -76,13 +76,13 @@
                 </div>
               </div>
 
-              <!-- SUBSOL PDF -->
+              <!-- Footer PDF -->
               <div class="mt-12 pt-4 border-t border-gray-200 text-center text-xs text-gray-400">
                 Document generat electronic. Nu necesită ștampilă conform legii privind guvernanța digitală.
               </div>
             </div>
 
-            <!-- BUTONUL PENTRU DESCĂRCARE (Nu va apărea în PDF pentru că este în afara div-ului de captură) -->
+            <!-- Buton Descarcare -->
             <div class="flex justify-end mt-2">
               <button mat-stroked-button color="primary"
                       class="!border-mystic-primary !text-mystic-primary hover:!bg-mystic-pale"
