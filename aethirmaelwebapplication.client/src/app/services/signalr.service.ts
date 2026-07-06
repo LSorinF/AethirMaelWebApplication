@@ -7,13 +7,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class SignalRService {
   private hubConnection: signalR.HubConnection | undefined;
-  // Asigură-te că acest port (7145) este cel din profilul "https" din launchSettings.json al serverului C#
   private hubUrl = 'https://localhost:7145/notificationHub';
 
   constructor(private snackBar: MatSnackBar) { }
 
   public startConnection = () => {
-    // Verificăm dacă există deja o conexiune activă pentru a evita erorile de pornire multiplă
     if (this.hubConnection && this.hubConnection.state === signalR.HubConnectionState.Connected) {
       console.log('SignalR este deja conectat.');
       return;
@@ -23,11 +21,9 @@ export class SignalRService {
 
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(this.hubUrl, {
-        // Trimitem token-ul JWT pentru autentificare
         accessTokenFactory: () => token || '',
       })
       .withAutomaticReconnect()
-      // ACTIVĂM LOGGING-UL DETALIAT PENTRU DEBUG
       .configureLogging(signalR.LogLevel.Information)
       .build();
 
@@ -36,21 +32,18 @@ export class SignalRService {
       .then(() => console.log('Conexiune SignalR inițiată cu succes (ID: ' + this.hubConnection?.connectionId + ')'))
       .catch(err => {
         console.error('Eroare CRITICĂ la conectarea SignalR: ', err);
-        // Putem afișa un mesaj discret utilizatorului că notificările nu merg
-        // this.snackBar.open('Sistemul de notificări indisponibil momentan.', 'X', { duration: 5000 });
+
       });
 
     this.addNotificationListener();
   }
 
   private addNotificationListener = () => {
-    // Ascultăm evenimentul "ReceiveNotification" definit în Backend
     this.hubConnection?.on('ReceiveNotification', (message) => {
       console.log('Mesaj SignalR primit:', message);
 
-      // Afișăm mesajul folosind SnackBar-ul Material
       this.snackBar.open(message, 'Închide', {
-        duration: 8000, // Durata mai lungă pentru a fi observat
+        duration: 8000, 
         verticalPosition: 'top',
         horizontalPosition: 'right',
         panelClass: ['bg-mystic-accent', 'text-white']

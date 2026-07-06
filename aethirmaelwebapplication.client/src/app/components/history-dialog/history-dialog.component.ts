@@ -61,6 +61,7 @@ export class HistoryDialogComponent implements OnInit {
     });
   }
 
+
   deleteRecord(record: MedicalRecord) {
     if (!confirm('Sigur vrei să ștergi această fișă definitiv? Acțiunea este ireversibilă.')) return;
 
@@ -68,13 +69,21 @@ export class HistoryDialogComponent implements OnInit {
     this.recordService.deleteRecord(record.medicalRecordId).subscribe({
       next: () => {
         this.snackBar.open('Fișă ștearsă cu succes.', 'OK', { duration: 3000 });
-        // Scoatem elementul din lista locala pentru a evita un request inutil
         this.records = this.records.filter(r => r.medicalRecordId !== record.medicalRecordId);
         this.isLoading = false;
       },
       error: (err) => {
         console.error(err);
-        this.snackBar.open('Eroare la ștergere.', 'X', { panelClass: ['bg-red-500', 'text-white'] });
+
+        let errorMessage = 'A apărut o eroare la ștergere.';
+
+        if (err.error && err.error.message) {
+          errorMessage = err.error.message;
+        } else if (typeof err.error === 'string') {
+          errorMessage = err.error;
+        }
+
+        this.snackBar.open(errorMessage, 'X', { duration: 5000, panelClass: ['bg-red-500', 'text-white'] });
         this.isLoading = false;
       }
     });

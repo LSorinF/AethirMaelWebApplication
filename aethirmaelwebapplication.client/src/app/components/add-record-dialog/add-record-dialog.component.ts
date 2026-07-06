@@ -45,7 +45,6 @@ export class AddRecordDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    //Verificam Edit mode
     if (this.data.existingRecord) {
       this.isEditMode = true;
       const rec = this.data.existingRecord;
@@ -67,6 +66,22 @@ export class AddRecordDialogComponent implements OnInit {
 
     this.isLoading = true;
 
+    const errorHandler = (err: any) => {
+      console.error('Eroare detaliată:', err);
+      let msg = 'A apărut o eroare la salvare/editare.';
+
+      if (err.error && err.error.message) {
+        msg = err.error.message;
+      } else if (typeof err.error === 'string') {
+        msg = err.error;
+      } else if (err.error && err.error.title) {
+        msg = err.error.title;
+      }
+
+      this.snackBar.open(msg, 'X', { duration: 5000, panelClass: ['bg-red-500', 'text-white'] });
+      this.isLoading = false;
+    };
+
     if (this.isEditMode && this.data.existingRecord) {
       // Logica de update
       const updatePayload: UpdateMedicalRecordDto = {
@@ -79,11 +94,7 @@ export class AddRecordDialogComponent implements OnInit {
           this.snackBar.open('Fișă medicală actualizată!', 'OK', { duration: 3000 });
           this.dialogRef.close(true);
         },
-        error: (err) => {
-          console.error(err);
-          this.snackBar.open('Eroare la actualizare.', 'X');
-          this.isLoading = false;
-        }
+        error: errorHandler
       });
 
     } else {

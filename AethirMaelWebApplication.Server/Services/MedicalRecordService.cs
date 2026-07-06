@@ -128,14 +128,32 @@ namespace AethirMaelWebApplication.Server.Services
             return records.Cast<object>().ToList();
         }
 
-        public async Task<bool> DeleteRecordAsync(int recordId)
+        public async Task<string> DeleteRecordAsync(int recordId, int userId)
         {
+            // Vedem ce doctor face cererea
+            var user = await _context.Users.Include(u => u.Doctor).FirstOrDefaultAsync(u => u.UserId == userId);
+
+            if (user?.Doctor == null)
+            {
+                return "Utilizatorul curent nu este un medic valid.";
+            }
+
             var record = await _context.MedicalRecords.FindAsync(recordId);
-            if (record == null) return false;
+
+            if (record == null)
+            {
+                return "Fișa medicală nu a fost găsită în sistem.";
+            }
+            //Daca doctorul nu a creat fisa nu are voie sa o stearga
+            if (record.DoctorId != user.Doctor.DoctorId)
+            {
+                return "Acțiune nepermisă. Nu aveți dreptul să ștergeți fișa creată de alt medic.";
+            }
 
             _context.MedicalRecords.Remove(record);
             await _context.SaveChangesAsync();
-            return true;
+
+            return "Success";
         }
     }
 }

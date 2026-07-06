@@ -62,20 +62,23 @@ namespace AethirMaelWebApplication.Server.Controllers
 
             return Ok(new { message = "Fișa medicală a fost actualizată." });
         }
-
-        // DELETE: Stergere 
+ 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Doctor,Medic")]
         public async Task<ActionResult> Delete(int id)
         {
-            var success = await _service.DeleteRecordAsync(id);
+            // Extragem ID-ul utilizatorului logat din token-ul JWT
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            if (!success)
+
+            var result = await _service.DeleteRecordAsync(id, userId);
+
+            if (result != "Success")
             {
-                return NotFound("Fișa nu a fost găsită.");
+                return BadRequest(new { message = result });
             }
 
-            return Ok(new { message = "Fișa a fost ștearsă." });
+            return Ok(new { message = "Fișa a fost ștearsă cu succes." });
         }
     }
 }

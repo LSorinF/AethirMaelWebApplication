@@ -148,7 +148,7 @@ export class DoctorDashboardComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  // --- APEL NLP AI (TAB 3 CHAT) ---
+  // --- APEL NLP AI  ---
   sendMessage() {
     if (!this.currentInput.trim() || this.isAiLoading || !this.selectedPatientId) return;
 
