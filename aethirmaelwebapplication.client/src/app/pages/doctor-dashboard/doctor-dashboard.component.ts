@@ -22,6 +22,7 @@ import { AppointmentService } from '../../services/appointment.service';
 import { MedicalRecordService } from '../../services/medical-record.service';
 import { HistoryDialogComponent } from '../../components/history-dialog/history-dialog.component';
 import { AddRecordDialogComponent } from '../../components/add-record-dialog/add-record-dialog.component';
+import { environment } from '../../../environments/environment';
 
 interface ChatMessage {
   text: string;
@@ -161,7 +162,7 @@ export class DoctorDashboardComponent implements OnInit, AfterViewChecked {
     this.isAiLoading = true;
     this.scrollToBottom();
 
-    this.http.post<{ response: string }>('https://localhost:7145/api/Mael/ask', { message: contextualizedPrompt })
+    this.http.post<{ response: string }>(`${environment.apiUrl}/api/Mael/ask`, { message: contextualizedPrompt })
       .subscribe({
         next: (res) => {
           this.messages.push({ text: res.response, isUser: false, time: new Date() });

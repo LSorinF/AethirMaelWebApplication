@@ -9,6 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ChatService } from '../../services/chat.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 interface ChatMessage {
   text: string;
@@ -86,7 +87,7 @@ export class ChatbotComponent implements OnInit, AfterViewChecked {
     this.scrollToBottom();
 
     // Apelam endpoint-ul de Backend
-    this.http.post<{ response: string }>('https://localhost:7145/api/Mael/ask', { message: question })
+    this.http.post<{ response: string }>(`${environment.apiUrl}/api/Mael/ask`, { message: question })
       .subscribe({
         next: (res) => {
           this.isLoading = false;

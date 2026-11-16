@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 interface ChatMessage {
   text: string;
@@ -59,7 +60,7 @@ export class PatientReportsDialogComponent implements AfterViewChecked {
     this.isLoading = true;
     this.scrollToBottom();
 
-    this.http.post<{ response: string }>('https://localhost:7145/api/Mael/ask', { message: contextualizedPrompt })
+    this.http.post<{ response: string }>(`${environment.apiUrl}/api/Mael/ask`, { message: contextualizedPrompt })
       .subscribe({
         next: (res) => {
           this.messages.push({ text: res.response, isUser: false, time: new Date() });

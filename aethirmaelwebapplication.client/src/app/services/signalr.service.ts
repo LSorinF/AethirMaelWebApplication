@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SignalRService {
   private hubConnection: signalR.HubConnection | undefined;
-  private hubUrl = 'https://localhost:7145/notificationHub';
+  private hubUrl = `${environment.apiUrl}/notificationHub`;
 
   constructor(private snackBar: MatSnackBar) { }
 

@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Doctor } from '../models/doctor.interface';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DoctorService {
   // MODIFICARE: URL-ul de bază se oprește la /api (fără /doctors)
-  private baseUrl = 'https://localhost:7145/api';
+  private baseUrl = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) { }
 

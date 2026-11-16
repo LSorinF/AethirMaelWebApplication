@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 // Definim interfata
 export interface AuthResponse {
@@ -13,7 +14,7 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://localhost:7145/api/Auth'; 
+  private apiUrl = `${environment.apiUrl}/api/Auth`; 
 
   //Retine user curent
   private currentUserSubject = new BehaviorSubject<AuthResponse | null>(null);
