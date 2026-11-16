@@ -19,11 +19,12 @@ builder.Services.AddCors(options =>
             policy.WithOrigins(
                 "http://localhost:4200",  // Portul standard Angular CLI
                 "https://localhost:4200",
-                "https://localhost:57997" // Port actual
+                "https://localhost:57997", // Port actual
+                "https://kind-stone-01d1d9510.azurestaticapps.net" // Replace with exact URL from Static Web App Overview if it includes a regional number
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials(); 
+            .AllowCredentials();
         });
 });
 
